@@ -16,7 +16,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout babeldoc metadata
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: funstory-ai/BabelDOC
           path: babeldoctemp1234567
@@ -29,7 +29,7 @@ jobs:
           path: ~/.cache/babeldoc
           key: test-1-babeldoc-assets-${{ hashFiles('babeldoctemp1234567/babeldoc/assets/embedding_assets_metadata.py') }}
       - name: 检出代码
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup uv with Python ${{ env.WIN_EXE_PYTHON_VERSION }}
         uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3 # v7.1.3
@@ -117,7 +117,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: 检出代码
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Download build artifact
         uses: actions/download-artifact@v6

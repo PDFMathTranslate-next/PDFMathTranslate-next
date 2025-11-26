@@ -26,7 +26,7 @@ jobs:
           - ubuntu-24.04-arm
     steps:
       - name: checkout babeldoc metadata
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: funstory-ai/BabelDOC
           path: babeldoctemp1234567
@@ -38,7 +38,7 @@ jobs:
         with:
           path: ~/.cache/babeldoc
           key: test-1-babeldoc-assets-${{ hashFiles('babeldoctemp1234567/babeldoc/assets/embedding_assets_metadata.py') }}
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ inputs.ref }}
       - name: Setup uv with Python ${{ matrix.python-version }}

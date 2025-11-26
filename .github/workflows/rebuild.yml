@@ -54,7 +54,7 @@ jobs:
       babeldoc_version: ${{ steps.get-babeldoc-version.outputs.version }}
     steps:
       - name: checkout babeldoc metadata
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: funstory-ai/BabelDOC
           path: babeldoctemp1234567
@@ -67,7 +67,7 @@ jobs:
           path: ~/.cache/babeldoc
           key: test-1-babeldoc-assets-${{ hashFiles('babeldoctemp1234567/babeldoc/assets/embedding_assets_metadata.py') }}
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ needs.get-latest-release.outputs.tag }}
 
@@ -198,7 +198,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ needs.get-latest-release.outputs.tag }}
 
@@ -241,7 +241,7 @@ jobs:
       - name: Convert to lowercase
         run: echo "GHCR_REPO_LOWER=$(echo ${{ env.GHCR_REPO }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ needs.get-latest-release.outputs.tag }}
       - name: Docker meta
@@ -346,7 +346,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: ${{ needs.get-latest-release.outputs.tag }}
       - name: Download build artifact

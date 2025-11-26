@@ -18,7 +18,7 @@ jobs:
     needs: check-repository
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Delete CNAME if not in main repository

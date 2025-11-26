@@ -42,7 +42,7 @@ jobs:
       is_release: ${{ steps.check-version.outputs.tag }}
       version: ${{ steps.check-version.outputs.tag && steps.get-release-version.outputs.version || steps.get-dev-version.outputs.version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           persist-credentials: true
           fetch-depth: 2
@@ -183,7 +183,7 @@ jobs:
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup uv with Python 3.13
         uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3 # v7.1.3
@@ -330,7 +330,7 @@ jobs:
       babeldoc_version: ${{ steps.get-babeldoc-version.outputs.version }}
     steps:
       - name: checkout babeldoc metadata
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: funstory-ai/BabelDOC
           path: babeldoctemp1234567
@@ -343,7 +343,7 @@ jobs:
           path: ~/.cache/babeldoc
           key: test-1-babeldoc-assets-${{ hashFiles('babeldoctemp1234567/babeldoc/assets/embedding_assets_metadata.py') }}
       - name: 检出代码
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup uv with Python ${{ env.WIN_EXE_PYTHON_VERSION }}
         uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3 # v7.1.3
@@ -487,7 +487,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: 检出代码
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Download build artifact
         uses: actions/download-artifact@v6
@@ -569,7 +569,7 @@ jobs:
     outputs:
       tag_name: ${{ steps.release-drafter.outputs.tag_name }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           persist-credentials: true
           fetch-depth: 2
@@ -592,7 +592,7 @@ jobs:
       needs.release-draft.result == 'success'
     steps:
       - name: 检出代码
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Delete existing release assets
         if: needs.build.outputs.is_release != ''

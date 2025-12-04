@@ -345,7 +345,15 @@ def _prepare_input_file(
             src_path = Path(f_in.name if hasattr(f_in, 'name') else f_in)
             # Use original filename without UUID prefix as requested
             dest_name = src_path.name
+            # Handle duplicate filenames by adding index suffix
             dest_path = output_dir / dest_name
+            counter = 1
+            while dest_path.exists():
+                stem = src_path.stem
+                suffix = src_path.suffix
+                dest_name = f"{stem}_{counter}{suffix}"
+                dest_path = output_dir / dest_name
+                counter += 1
             shutil.copy(src_path, dest_path)
             prepared_files.append(dest_path)
             

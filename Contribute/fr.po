@@ -295,13 +295,13 @@ msgstr "## Erreur SSL et autres problèmes réseau"
 
 # This content is from "FAQ.md", line 39
 msgctxt "chunk_DF99BBC1"
-msgid "When downloading hugging face models, users in China may get network error. For example, in [issue #55](https://github.com/PDFMathTranslate/PDFMathTranslate-next/issues/55), [#70](https://github.com/PDFMathTranslate/PDFMathTranslate-next/issues/70).\n"
-msgstr "Lors du téléchargement des modèles de hugging face, les utilisateurs en Chine peuvent rencontrer des erreurs réseau. Par exemple, dans [issue #55](https://github.com/PDFMathTranslate/PDFMathTranslate-next/issues/55), [#70](https://github.com/PDFMathTranslate/PDFMathTranslate-next/issues/70).\n"
+msgid "When downloading hugging face models, users in China may get network error. For example, in [issue #55](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/issues/55), [#70](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/issues/70).\n"
+msgstr "Lors du téléchargement des modèles de hugging face, les utilisateurs en Chine peuvent rencontrer des erreurs réseau. Par exemple, dans [issue #55](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/issues/55), [#70](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/issues/70).\n"
 
 # This content is from "FAQ.md", line 41
 msgctxt "chunk_AC4D20E5"
-msgid "- **Solution**:\n  - [Bypass GFW](https://github.com/clash-verge-rev/clash-verge-rev).\n  - [Use Hugging Face Mirror](https://hf-mirror.com/).\n  - [Use Portable version](https://github.com/PDFMathTranslate/PDFMathTranslate-next?tab=readme-ov-file#method-ii-portable).\n  - [Use Docker instead](https://github.com/PDFMathTranslate/PDFMathTranslate-next#docker).\n  - [Update Certificates](https://stackoverflow.com/questions/51925384/unable-to-get-local-issuer-certificate-when-using-requests), as suggested in [issue #55](https://github.com/PDFMathTranslate/PDFMathTranslate-next/issues/55).\n"
-msgstr "- **Solution** :\n  - [Contourner le GFW](https://github.com/clash-verge-rev/clash-verge-rev).\n  - [Utiliser le miroir Hugging Face](https://hf-mirror.com/).\n  - [Utiliser la version portable](https://github.com/PDFMathTranslate/PDFMathTranslate-next?tab=readme-ov-file#method-ii-portable).\n  - [Utiliser Docker à la place](https://github.com/PDFMathTranslate/PDFMathTranslate-next#docker).\n  - [Mettre à jour les certificats](https://stackoverflow.com/questions/51925384/unable-to-get-local-issuer-certificate-when-using-requests), comme suggéré dans [issue #55](https://github.com/PDFMathTranslate/PDFMathTranslate-next/issues/55).\n"
+msgid "- **Solution**:\n  - [Bypass GFW](https://github.com/clash-verge-rev/clash-verge-rev).\n  - [Use Hugging Face Mirror](https://hf-mirror.com/).\n  - [Use Portable version](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next?tab=readme-ov-file#method-ii-portable).\n  - [Use Docker instead](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next#docker).\n  - [Update Certificates](https://stackoverflow.com/questions/51925384/unable-to-get-local-issuer-certificate-when-using-requests), as suggested in [issue #55](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/issues/55).\n"
+msgstr "- **Solution** :\n  - [Contourner le GFW](https://github.com/clash-verge-rev/clash-verge-rev).\n  - [Utiliser le miroir Hugging Face](https://hf-mirror.com/).\n  - [Utiliser la version portable](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next?tab=readme-ov-file#method-ii-portable).\n  - [Utiliser Docker à la place](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next#docker).\n  - [Mettre à jour les certificats](https://stackoverflow.com/questions/51925384/unable-to-get-local-issuer-certificate-when-using-requests), comme suggéré dans [issue #55](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/issues/55).\n"
 
 # This content is from "FAQ.md", line 48
 msgctxt "chunk_8AA448AC"
@@ -320,8 +320,8 @@ msgstr "## Erreur lors du lancement de l'interface graphique avec 0.0.0.0"
 
 # This content is from "FAQ.md", line 53
 msgctxt "chunk_D65A22CE"
-msgid "Using proxy software in global mode may prevent Gradio from starting properly. For example, in [issue #77](https://github.com/PDFMathTranslate/PDFMathTranslate-next/issues/77).\n"
-msgstr "L'utilisation d'un logiciel proxy en mode global peut empêcher Gradio de démarrer correctement. Par exemple, dans [issue #77](https://github.com/PDFMathTranslate/PDFMathTranslate-next/issues/77).\n"
+msgid "Using proxy software in global mode may prevent Gradio from starting properly. For example, in [issue #77](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/issues/77).\n"
+msgstr "L'utilisation d'un logiciel proxy en mode global peut empêcher Gradio de démarrer correctement. Par exemple, dans [issue #77](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/issues/77).\n"
 
 # This content is from "FAQ.md", line 55
 msgctxt "chunk_587F7FBA"
@@ -335,8 +335,8 @@ msgstr "Utiliser le mode règle\n"
 
 # This content is from "python.md", line 1
 msgctxt "chunk_F076772C"
-msgid "> [!NOTE]\n> This documentation may contain AI-generated content. While we strive for accuracy, there might be inaccuracies. Please report any issues via:\n>\n> - [GitHub Issues](https://github.com/PDFMathTranslate/PDFMathTranslate-next/issues)\n> - Community contribution (PRs welcome!)\n"
-msgstr ">\n> Thank you for your understanding and support!\n\n### Quick Links\n\n- [Home](https://pdf2zh-next.com/)\n- [Getting Started](https://pdf2zh-next.com/getting-started/)\n- [Command Line](https://pdf2zh-next.com/getting-started/CLI.html)\n- [WebUI](https://pdf2zh-next.com/getting-started/USAGE_webui.html)\n- [Supported Languages](https://pdf2zh-next.com/advanced/LANGUAGE.html)\n- [FAQ](https://pdf2zh-next.com/community/FAQ.html)\n- [For Translators](https://pdf2zh-next.com/community/CONTRIBUTING_translation.html)\n\n---\n\n### OUTPUT LANGUAGE\n\nfr\n\n---\n\n### OUTPUT\n\n> [!NOTE]\n> Cette documentation peut contenir du contenu généré par IA. Bien que nous nous efforcions d'être précis, il peut y avoir des inexactitudes. Veuillez signaler tout problème via :\n>\n> - [Problèmes GitHub](https://github.com/PDFMathTranslate/PDFMathTranslate-next/issues)\n> - Contribution communautaire (les PR sont les bienvenues !)\n>\n> Merci pour votre compréhension et votre soutien !\n\n### Liens rapides\n\n- [Accueil](https://pdf2zh-next.com/)\n- [Commencer](https://pdf2zh-next.com/getting-started/)\n- [Ligne de commande](https://pdf2zh-next.com/getting-started/CLI.html)\n- [WebUI](https://pdf2zh-next.com/getting-started/USAGE_webui.html)\n- [Langues supportées](https://pdf2zh-next.com/advanced/LANGUAGE.html)\n- [FAQ](https://pdf2zh-next.com/community/FAQ.html)\n- [Guide de contribution des traductions](https://pdf2zh-next.com/community/CONTRIBUTING_translation.html)\n"
+msgid "> [!NOTE]\n> This documentation may contain AI-generated content. While we strive for accuracy, there might be inaccuracies. Please report any issues via:\n>\n> - [GitHub Issues](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/issues)\n> - Community contribution (PRs welcome!)\n"
+msgstr ">\n> Thank you for your understanding and support!\n\n### Quick Links\n\n- [Home](https://pdf2zh-next.com/)\n- [Getting Started](https://pdf2zh-next.com/getting-started/)\n- [Command Line](https://pdf2zh-next.com/getting-started/CLI.html)\n- [WebUI](https://pdf2zh-next.com/getting-started/USAGE_webui.html)\n- [Supported Languages](https://pdf2zh-next.com/advanced/LANGUAGE.html)\n- [FAQ](https://pdf2zh-next.com/community/FAQ.html)\n- [For Translators](https://pdf2zh-next.com/community/CONTRIBUTING_translation.html)\n\n---\n\n### OUTPUT LANGUAGE\n\nfr\n\n---\n\n### OUTPUT\n\n> [!NOTE]\n> Cette documentation peut contenir du contenu généré par IA. Bien que nous nous efforcions d'être précis, il peut y avoir des inexactitudes. Veuillez signaler tout problème via :\n>\n> - [Problèmes GitHub](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/issues)\n> - Contribution communautaire (les PR sont les bienvenues !)\n>\n> Merci pour votre compréhension et votre soutien !\n\n### Liens rapides\n\n- [Accueil](https://pdf2zh-next.com/)\n- [Commencer](https://pdf2zh-next.com/getting-started/)\n- [Ligne de commande](https://pdf2zh-next.com/getting-started/CLI.html)\n- [WebUI](https://pdf2zh-next.com/getting-started/USAGE_webui.html)\n- [Langues supportées](https://pdf2zh-next.com/advanced/LANGUAGE.html)\n- [FAQ](https://pdf2zh-next.com/community/FAQ.html)\n- [Guide de contribution des traductions](https://pdf2zh-next.com/community/CONTRIBUTING_translation.html)\n"
 
 # This content is from "python.md", line 7
 msgctxt "chunk_0B12F3B2"
@@ -1090,8 +1090,8 @@ msgstr "#### Arguments de ligne de commande\n"
 
 # This content is from "advanced.md", line 24
 msgctxt "chunk_A2860DDF"
-msgid "Execute the translation command in the command line to generate the translated document `example-mono.pdf` and the bilingual document `example-dual.pdf` in the current working directory. Use Google as the default translation service. More support translation services can find [HERE](https://github.com/PDFMathTranslate/PDFMathTranslate-next/blob/main/docs/ADVANCED.md#services).\n"
-msgstr "Exécutez la commande de traduction dans la ligne de commande pour générer le document traduit `example-mono.pdf` et le document bilingue `example-dual.pdf` dans le répertoire de travail actuel. Utilisez Google comme service de traduction par défaut. Plus de services de traduction supportés peuvent être trouvés [HERE](https://github.com/PDFMathTranslate/PDFMathTranslate-next/blob/main/docs/ADVANCED.md#services).\n"
+msgid "Execute the translation command in the command line to generate the translated document `example-mono.pdf` and the bilingual document `example-dual.pdf` in the current working directory. Use Google as the default translation service. More support translation services can find [HERE](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/blob/main/docs/ADVANCED.md#services).\n"
+msgstr "Exécutez la commande de traduction dans la ligne de commande pour générer le document traduit `example-mono.pdf` et le document bilingue `example-dual.pdf` dans le répertoire de travail actuel. Utilisez Google comme service de traduction par défaut. Plus de services de traduction supportés peuvent être trouvés [HERE](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/blob/main/docs/ADVANCED.md#services).\n"
 
 # This content is from "advanced.md", line 28
 msgctxt "chunk_B3EB591F"
@@ -1760,8 +1760,8 @@ msgstr "## Types de contributions non acceptées\n"
 
 # This content is from "Contribution-Guide.md", line 13
 msgctxt "chunk_D91B42A2"
-msgid "1. Documentation internationalization/translation\n2. Contributions related to core infrastructure, such as HTTP API, etc.\n3. Issues explicitly marked as \"No help needed\" (including issues in the [Byaidu/PDFMathTranslate](Byaidu/PDFMathTranslate) and the [PDFMathTranslate/PDFMathTranslate-next](PDFMathTranslate/PDFMathTranslate-next) repository).\n4. Other contributions deemed inappropriate by the maintainers.\n5. Contributing documentation, but changing the documentation in languages other than English.\n6. PRs that require modifying PDF files.\n7. PRs that modify the `pdf2zh_next/gui_translation.yaml` file.\n"
-msgstr "1. Documentation internationalisation/traduction  \n2. Contributions liées à l'infrastructure principale, telles que l'API HTTP, etc.  \n3. Problèmes explicitement marqués comme \"No help needed\" (y compris les problèmes dans les dépôts [Byaidu/PDFMathTranslate](Byaidu/PDFMathTranslate) et [PDFMathTranslate/PDFMathTranslate-next](PDFMathTranslate/PDFMathTranslate-next)).  \n4. Autres contributions jugées inappropriées par les mainteneurs.  \n5. Contribution à la documentation, mais modification de la documentation dans des langues autres que l'anglais.  \n6. PRs nécessitant la modification de fichiers PDF.  \n7. PRs modifiant le fichier `pdf2zh_next/gui_translation.yaml`.\n"
+msgid "1. Documentation internationalization/translation\n2. Contributions related to core infrastructure, such as HTTP API, etc.\n3. Issues explicitly marked as \"No help needed\" (including issues in the [Byaidu/PDFMathTranslate](Byaidu/PDFMathTranslate) and the [PDFMathTranslate-next/PDFMathTranslate-next](PDFMathTranslate-next/PDFMathTranslate-next) repository).\n4. Other contributions deemed inappropriate by the maintainers.\n5. Contributing documentation, but changing the documentation in languages other than English.\n6. PRs that require modifying PDF files.\n7. PRs that modify the `pdf2zh_next/gui_translation.yaml` file.\n"
+msgstr "1. Documentation internationalisation/traduction  \n2. Contributions liées à l'infrastructure principale, telles que l'API HTTP, etc.  \n3. Problèmes explicitement marqués comme \"No help needed\" (y compris les problèmes dans les dépôts [Byaidu/PDFMathTranslate](Byaidu/PDFMathTranslate) et [PDFMathTranslate-next/PDFMathTranslate-next](PDFMathTranslate-next/PDFMathTranslate-next)).  \n4. Autres contributions jugées inappropriées par les mainteneurs.  \n5. Contribution à la documentation, mais modification de la documentation dans des langues autres que l'anglais.  \n6. PRs nécessitant la modification de fichiers PDF.  \n7. PRs modifiant le fichier `pdf2zh_next/gui_translation.yaml`.\n"
 
 # This content is from "Contribution-Guide.md", line 21
 msgctxt "chunk_7828B7C7"
@@ -1915,8 +1915,8 @@ msgstr "- **config folder** : Système de configuration.\n- **translator folder*
 
 # This content is from "Contribution-Guide.md", line 127
 msgctxt "chunk_7B1CB228"
-msgid "Ask AI to understand the project: [DeepWiki](https://deepwiki.com/PDFMathTranslate/PDFMathTranslate-next)\n"
-msgstr "Demandez à l'IA de comprendre le projet : [DeepWiki](https://deepwiki.com/PDFMathTranslate/PDFMathTranslate-next)\n"
+msgid "Ask AI to understand the project: [DeepWiki](https://deepwiki.com/PDFMathTranslate-next/PDFMathTranslate-next)\n"
+msgstr "Demandez à l'IA de comprendre le projet : [DeepWiki](https://deepwiki.com/PDFMathTranslate-next/PDFMathTranslate-next)\n"
 
 # This content is from "Contribution-Guide.md", line 129
 msgctxt "chunk_0C087ADF"
@@ -2020,8 +2020,8 @@ msgstr "<h4>1. Tirez et exécutez :</h4>\n"
 
 # This content is from "INSTALLATION_docker.md", line 20
 msgctxt "chunk_B1F3E7B5"
-msgid "> [!NOTE]\n> \n> - If you cannot access Docker Hub, please try the image on [GitHub Container Registry](https://github.com/PDFMathTranslate/PDFMathTranslate-next/pkgs/container/pdfmathtranslate).\n> \n> ```bash\n> docker pull ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> docker run -d -p 7860:7860 ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> ```\n"
-msgstr "> [!NOTE]\n> \n> - Si vous ne pouvez pas accéder à Docker Hub, essayez l'image sur [GitHub Container Registry](https://github.com/PDFMathTranslate/PDFMathTranslate-next/pkgs/container/pdfmathtranslate).\n> \n> ```bash\n> docker pull ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> docker run -d -p 7860:7860 ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> ```\n"
+msgid "> [!NOTE]\n> \n> - If you cannot access Docker Hub, please try the image on [GitHub Container Registry](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/pkgs/container/pdfmathtranslate).\n> \n> ```bash\n> docker pull ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> docker run -d -p 7860:7860 ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> ```\n"
+msgstr "> [!NOTE]\n> \n> - Si vous ne pouvez pas accéder à Docker Hub, essayez l'image sur [GitHub Container Registry](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/pkgs/container/pdfmathtranslate).\n> \n> ```bash\n> docker pull ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> docker run -d -p 7860:7860 ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> ```\n"
 
 # This content is from "INSTALLATION_docker.md", line 29
 msgctxt "chunk_0222B95B"
@@ -2085,8 +2085,8 @@ msgstr "### Installer PDFMathTranslate via fichier .exe\n"
 
 # This content is from "INSTALLATION_winexe.md", line 7
 msgctxt "chunk_D3A98932"
-msgid "***Step 1*** | Download `pdf2zh-<version>-with-assets-win64.zip` from [release page](https://github.com/PDFMathTranslate/PDFMathTranslate-next/releases).\n"
-msgstr "***Étape 1*** | Téléchargez `pdf2zh-<version>-with-assets-win64.zip` depuis la [page des versions](https://github.com/PDFMathTranslate/PDFMathTranslate-next/releases).\n"
+msgid "***Step 1*** | Download `pdf2zh-<version>-with-assets-win64.zip` from [release page](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/releases).\n"
+msgstr "***Étape 1*** | Téléchargez `pdf2zh-<version>-with-assets-win64.zip` depuis la [page des versions](https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/releases).\n"
 
 # This content is from "INSTALLATION_winexe.md", line 9
 msgctxt "chunk_29FE8C1D"

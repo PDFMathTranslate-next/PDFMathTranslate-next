@@ -2020,8 +2020,8 @@ msgstr "<h4>1. Pullen und ausführen:</h4>\n"
 
 # This content is from "INSTALLATION_docker.md", line 20
 msgctxt "chunk_B1F3E7B5"
-msgid "> [!NOTE]\n> \n> - If you cannot access Docker Hub, please try the image on [GitHub Container Registry](https://github.com/PDFMathTranslate/PDFMathTranslate-next/pkgs/container/pdfmathtranslate).\n> \n> ```bash\n> docker pull ghcr.io/PDFMathTranslate/PDFMathTranslate-next\n> docker run -d -p 7860:7860 ghcr.io/PDFMathTranslate/PDFMathTranslate-next\n> ```\n"
-msgstr "> [!NOTE]\n> \n> - Wenn Sie nicht auf Docker Hub zugreifen können, versuchen Sie bitte das Image auf [GitHub Container Registry](https://github.com/PDFMathTranslate/PDFMathTranslate-next/pkgs/container/pdfmathtranslate).\n> \n> ```bash\n> docker pull ghcr.io/PDFMathTranslate/PDFMathTranslate-next\n> docker run -d -p 7860:7860 ghcr.io/PDFMathTranslate/PDFMathTranslate-next\n> ```\n"
+msgid "> [!NOTE]\n> \n> - If you cannot access Docker Hub, please try the image on [GitHub Container Registry](https://github.com/PDFMathTranslate/PDFMathTranslate-next/pkgs/container/pdfmathtranslate).\n> \n> ```bash\n> docker pull ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> docker run -d -p 7860:7860 ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> ```\n"
+msgstr "> [!NOTE]\n> \n> - Wenn Sie nicht auf Docker Hub zugreifen können, versuchen Sie bitte das Image auf [GitHub Container Registry](https://github.com/PDFMathTranslate/PDFMathTranslate-next/pkgs/container/pdfmathtranslate).\n> \n> ```bash\n> docker pull ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> docker run -d -p 7860:7860 ghcr.io/pdfmathtranslate-next/pdfmathtranslate-next\n> ```\n"
 
 # This content is from "INSTALLATION_docker.md", line 29
 msgctxt "chunk_0222B95B"

@@ -103,7 +103,7 @@ jobs:
           uv run --active babeldoc --generate-offline-assets ./build
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: win64-exe
           path: ./build
@@ -164,7 +164,7 @@ jobs:
           ./build/pdf2zh.exe ./test/file/translate.cli.plain.text.pdf -o ./test/file
           
       - name: Upload test results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: test-results
           path: ./test/file/

@@ -76,6 +76,7 @@ class BaseTranslator(ABC):
         :return: translated text
         """
         self.translate_call_count += 1
+        text = self._strip_surrogate_codepoints(text)
         if not (self.ignore_cache or ignore_cache):
             try:
                 cache = self.cache.get(text)
@@ -97,6 +98,7 @@ class BaseTranslator(ABC):
         :return: translated text
         """
         self.translate_call_count += 1
+        text = self._strip_surrogate_codepoints(text)
         if not (self.ignore_cache or ignore_cache):
             try:
                 cache = self.cache.get(text)
@@ -140,6 +142,12 @@ class BaseTranslator(ABC):
         :return: Text without a thought chain
         """
         return re.sub(r"^<think>.+?</think>", "", content, count=1, flags=re.DOTALL)
+
+    def _strip_surrogate_codepoints(self, text: str) -> str:
+        if not isinstance(text, str):
+            return text
+        # Strip surrogate code points that cannot be encoded in UTF-8.
+        return re.sub(r"[\ud800-\udfff]", "", text)
 
     def __str__(self):
         """

@@ -40,6 +40,7 @@ class BaseTranslator(ABC):
         self.lang_in = lang_in
         self.lang_out = lang_out
         self.rate_limiter = rate_limiter
+        self.custom_system_prompt = settings.translation.custom_system_prompt
 
         self.cache = TranslationCache(
             self.name,
@@ -180,9 +181,18 @@ class BaseTranslator(ABC):
         :param text: input text
         :return: the whole prompt for LLM translator
         """
-        return [
+        messages = []
+        if self.custom_system_prompt:
+            messages.append(
+                {
+                    "role": "system",
+                    "content": self.custom_system_prompt,
+                }
+            )
+        messages.append(
             {
                 "role": "user",
-                "content": f"You are a professional,authentic machine translation engine.\n\n;; Treat next line as plain text input and translate it into {self.lang_out}, output translation ONLY. If translation is unnecessary (e.g. proper nouns, codes, {'{{1}}, etc. '}), return the original text. NO explanations. NO notes. Input:\n\n{text}",
+                "content": f"Translate into {self.lang_out}: Use semantic translation for academic/technical terms (avoid mechanical transliteration). Ensure natural coherence in the target language. Preserve formulas, placeholders (like {{1}}), code snippets, and proper nouns unchanged. Output translation only.\n\n{text}",
             },
-        ]
+        )
+        return messages

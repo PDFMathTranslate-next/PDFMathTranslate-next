@@ -389,6 +389,12 @@ class SiliconFlowSettings(BaseModel):
         default=False,
         description="Send enable thinking param to SiliconFlow service",
     )
+    siliconflow_temperature: str | None = Field(
+        default=None, description="Temperature for SiliconFlow service"
+    )
+    siliconflow_send_temperature: bool | None = Field(
+        default=None, description="Send temperature to SiliconFlow service"
+    )
     siliconflow_enable_json_mode: bool | None = Field(
         default=False, description="Enable JSON mode for SiliconFlow service"
     )
@@ -399,6 +405,16 @@ class SiliconFlowSettings(BaseModel):
         self.siliconflow_api_key = _clean_string(self.siliconflow_api_key)
         self.siliconflow_base_url = _clean_string(self.siliconflow_base_url)
         self.siliconflow_model = _clean_string(self.siliconflow_model)
+        self.siliconflow_temperature = _clean_string(self.siliconflow_temperature)
+        if self.siliconflow_send_temperature:
+            if not self.siliconflow_temperature:
+                raise ValueError(
+                    "Temperature is required when send temperature is enabled"
+                )
+            try:
+                float(self.siliconflow_temperature)
+            except ValueError as e:
+                raise ValueError("Temperature must be a float") from e
 
 
 GUI_PASSWORD_FIELDS.append("siliconflow_api_key")

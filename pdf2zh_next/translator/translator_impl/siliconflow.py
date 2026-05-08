@@ -24,12 +24,18 @@ class SiliconFlowTranslator(BaseTranslator):
         rate_limiter: BaseRateLimiter,
     ):
         super().__init__(settings, rate_limiter)
-        self.options = {"temperature": 0}  # 随机采样可能会打断公式标记
+        self.options = {}
+        self.temperature = settings.translate_engine_settings.siliconflow_temperature
+        self.send_temperature = (
+            settings.translate_engine_settings.siliconflow_send_temperature
+        )
+        if self.temperature:
+            self.add_cache_impact_parameters("temperature", self.temperature)
+            self.options["temperature"] = float(self.temperature)
         self.client = openai.OpenAI(
             base_url=settings.translate_engine_settings.siliconflow_base_url,
             api_key=settings.translate_engine_settings.siliconflow_api_key,
         )
-        self.add_cache_impact_parameters("temperature", self.options["temperature"])
         self.model = settings.translate_engine_settings.siliconflow_model
         self.enable_thinking = (
             settings.translate_engine_settings.siliconflow_enable_thinking

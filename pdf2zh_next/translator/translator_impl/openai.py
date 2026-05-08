@@ -48,7 +48,7 @@ class OpenAITranslator(BaseTranslator):
             settings.translate_engine_settings.openai_send_reasoning_effort
         )
 
-        if self.send_temperature and self.temperature:
+        if self.temperature:
             self.add_cache_impact_parameters("temperature", self.temperature)
             self.options["temperature"] = float(self.temperature)
         if self.send_reasoning_effort and self.reasoning_effort:

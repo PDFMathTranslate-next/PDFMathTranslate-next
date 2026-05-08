@@ -86,6 +86,58 @@ For different use cases, we provide distinct methods to use our program. Check o
 
 For detailed explanations, please refer to our document about [Advanced Usage](https://pdf2zh-next.com/advanced/advanced.html) for a full list of each option.
 
+<h2 id="translation-quality">Translation Quality Tuning</h2>
+
+### Temperature (Creativity Control)
+
+Higher temperature produces more natural, varied translations; lower temperature is more literal and deterministic.
+
+```bash
+# OpenAI / OpenAI-compatible (DeepSeek, Gemini, Grok, etc.)
+pdf2zh input.pdf --openai --openai-model gpt-4o --openai-temperature 0.3
+
+# SiliconFlow
+pdf2zh input.pdf --siliconflow --siliconflow-model Qwen/Qwen2.5-7B-Instruct \
+  --siliconflow-temperature 0.3 --siliconflow-send-temperature
+```
+
+Recommended starting points:
+- **0.1-0.2**: Conservative, minimal deviation from literal translation
+- **0.3-0.4**: Good balance of accuracy and natural fluency (recommended)
+- **0.5+**: More creative/phrasal, better for literary text
+
+### Custom System Prompt
+
+Override the default translation instructions entirely. Useful for:
+- Adding model-specific prefixes (e.g., Qwen 3's `/no_think` to disable chain-of-thought)
+- Domain-specific guidance (e.g., medical/legal translation style)
+
+```bash
+# Disable chain-of-thought on Qwen 3 models
+pdf2zh input.pdf --openai --openai-model qwen3-8b \
+  --custom-system-prompt "/no_think"
+
+# Custom domain instruction
+pdf2zh input.pdf --openai \
+  --custom-system-prompt "You are a medical translator. Prioritize terminology accuracy."
+```
+
+### Translation Prompt
+
+The default prompt now encourages semantic translation for academic/technical terms rather than mechanical transliteration, and prioritizes natural coherence in the target language. Formulas, placeholders (like `{{1}}`), code snippets, and proper nouns are preserved automatically.
+
+### Glossary / Term Extraction
+
+For consistent terminology, use the glossary feature:
+
+```bash
+# Auto-extract terms (default when using LLM engines)
+pdf2zh input.pdf --openai
+
+# Provide custom glossary file
+pdf2zh input.pdf --openai --glossaries /path/to/glossary.txt
+```
+
 <h2 id="downstream">Secondary Development (APIs)</h2>
 
 <!-- <!-- For downstream applications, please refer to our document about [API Details](./docs/APIS.md) for futher information about: -->

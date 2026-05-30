@@ -136,11 +136,14 @@ def _translate_wrapper(
         # (cache race), producing many popups. Pre-filling the cache
         # prevents the subprocess call entirely.
         import sys
+
         if sys.platform == "win32":
             try:
                 import joblib.externals.loky.backend.context as _loky_ctx
+
                 if _loky_ctx.physical_cores_cache is None:
                     import os
+
                     _loky_ctx.physical_cores_cache = os.cpu_count()
                     logger.info(
                         "Pre-filled loky physical_cores_cache=%d to prevent "
@@ -620,6 +623,7 @@ def create_babeldoc_config(settings: SettingsModel, file: Path) -> BabelDOCConfi
         only_include_translated_page=settings.pdf.only_include_translated_page,
         # BabelDOC v0.5.1 new options
         merge_alternating_line_numbers=not settings.pdf.no_merge_alternating_line_numbers,
+        remove_margin_line_numbers=settings.pdf.remove_margin_line_numbers,
         remove_non_formula_lines=not settings.pdf.no_remove_non_formula_lines,
         non_formula_line_iou_threshold=settings.pdf.non_formula_line_iou_threshold,
         figure_table_protection_threshold=settings.pdf.figure_table_protection_threshold,

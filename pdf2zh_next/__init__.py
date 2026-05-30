@@ -2,6 +2,8 @@ from pdf2zh_next.config import AnythingLLMSettings
 from pdf2zh_next.config import AzureOpenAISettings
 from pdf2zh_next.config import AzureSettings
 from pdf2zh_next.config import BingSettings
+from pdf2zh_next.config import ClaudeCodeSettings
+from pdf2zh_next.config import CodexSettings
 from pdf2zh_next.config import DeepLSettings
 from pdf2zh_next.config import DeepSeekSettings
 from pdf2zh_next.config import DifySettings
@@ -67,4 +69,5 @@ __all__ = [
     "create_babeldoc_config",
     "ConfigManager",
     "ClaudeCodeSettings",
+    "CodexSettings",
 ]

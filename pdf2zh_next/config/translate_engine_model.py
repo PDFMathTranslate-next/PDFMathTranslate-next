@@ -101,6 +101,9 @@ class OpenAISettings(BaseModel):
     openai_enable_json_mode: bool | None = Field(
         default=None, description="Enable JSON mode for OpenAI service"
     )
+    openai_use_stream: bool | None = Field(
+        default=False, description="Use streaming Chat Completions for OpenAI service"
+    )
 
     # This parameter contains a spelling error, but it will not be corrected for compatibility reasons.
     # For details, see: https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/issues/175#issuecomment-3213568681
@@ -738,6 +741,10 @@ class OpenAICompatibleSettings(BaseModel):
     openai_compatible_enable_json_mode: bool | None = Field(
         default=None, description="Enable JSON mode for OpenAI Compatible service"
     )
+    openai_compatible_use_stream: bool | None = Field(
+        default=False,
+        description="Use streaming Chat Completions for OpenAI Compatible service",
+    )
 
     def validate_settings(self) -> None:
         if not self.openai_compatible_api_key:
@@ -786,6 +793,7 @@ class OpenAICompatibleSettings(BaseModel):
             openai_send_temprature=self.openai_compatible_send_temperature,
             openai_send_reasoning_effort=self.openai_compatible_send_reasoning_effort,
             openai_enable_json_mode=self.openai_compatible_enable_json_mode,
+            openai_use_stream=self.openai_compatible_use_stream,
         )
 
 

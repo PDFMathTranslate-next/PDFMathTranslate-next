@@ -6,6 +6,7 @@ from pdf2zh_next.config.model import BasicSettings
 from pdf2zh_next.config.model import PDFSettings
 from pdf2zh_next.config.model import TranslationSettings
 from pdf2zh_next.config.translate_engine_model import CLISettings
+from pdf2zh_next.config.translate_engine_model import OpenAICompatibleSettings
 from pdf2zh_next.config.translate_engine_model import OpenAISettings
 
 
@@ -205,6 +206,7 @@ class TestOpenAISettings:
         assert settings.openai_model == "gpt-4o-mini"
         assert settings.openai_base_url is None
         assert settings.openai_api_key is None
+        assert settings.openai_use_stream is False
 
     def test_alias_fields(self):
         """Test alias field names work correctly"""
@@ -218,6 +220,23 @@ class TestOpenAISettings:
         assert settings.openai_model == "gpt-4"
         assert settings.openai_base_url == "http://api.example.com"
         assert settings.openai_api_key == "test-key"
+
+    def test_openai_compatible_stream_transform(self):
+        """Test OpenAI-compatible stream option maps to OpenAI settings."""
+        settings = OpenAICompatibleSettings(
+            openai_compatible_model="test-model",
+            openai_compatible_base_url="http://api.example.com",
+            openai_compatible_api_key="test-key",
+            openai_compatible_use_stream=True,
+        )
+
+        transformed = settings.transform()
+
+        assert isinstance(transformed, OpenAISettings)
+        assert transformed.openai_model == "test-model"
+        assert transformed.openai_base_url == "http://api.example.com"
+        assert transformed.openai_api_key == "test-key"
+        assert transformed.openai_use_stream is True
 
 
 class TestCLISettings:

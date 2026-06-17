@@ -115,7 +115,7 @@ jobs:
 
     steps:
       - name: Download all the dists
-        uses: actions/download-artifact@f093f21ca4cfa7c75ccbbc2be54da76a0c7e1f05 # v4.1.8
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v4.1.8
         with:
           name: python-package-distributions
           path: dist/
@@ -140,7 +140,7 @@ jobs:
 
     steps:
       - name: Download all the dists
-        uses: actions/download-artifact@f093f21ca4cfa7c75ccbbc2be54da76a0c7e1f05 # v4.1.8
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v4.1.8
         with:
           name: python-package-distributions
           path: dist/
@@ -271,7 +271,7 @@ jobs:
           echo "GHCR_REPO_LOWER=$(echo ${{ env.GHCR_REPO }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Download digests
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ${{ runner.temp }}/digests
           pattern: digests-*
@@ -490,7 +490,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Download build artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: win64-exe-with-assets
           path: ./build
@@ -609,7 +609,7 @@ jobs:
           fi
 
       - name: Download build artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: win64-exe-with-assets
           path: ./build

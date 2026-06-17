@@ -90,7 +90,7 @@ jobs:
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: digests-${{ env.PLATFORM_PAIR }}
           path: ${{ runner.temp }}/digests/*
@@ -231,7 +231,7 @@ jobs:
           }
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: win64-exe
           path: ./build
@@ -272,7 +272,7 @@ jobs:
           ./build/pdf2zh.exe ./test/file/translate.cli.plain.text.pdf --output ./test/file --bing
           
       - name: Upload test results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: test-results
           path: ./test/file/
@@ -311,14 +311,14 @@ jobs:
           ./build/pdf2zh.exe ./test/file/translate.cli.plain.text.pdf --output ./test/file/offline_result --bing
 
       - name: Upload offline test results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: offline-test-results
           path: ./test/file/offline_result/
           if-no-files-found: error
 
       - name: Upload build with offline assets artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: win64-exe-with-assets
           path: ./build

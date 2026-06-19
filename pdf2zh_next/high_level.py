@@ -107,6 +107,59 @@ class SubprocessCrashError(TranslationError):
 
 logger = logging.getLogger(__name__)
 
+_BABELDOC_SKIP_CODE_BLOCKS_PATCHED = False
+
+
+def _ensure_babeldoc_skip_code_blocks_patch():
+    global _BABELDOC_SKIP_CODE_BLOCKS_PATCHED
+    if _BABELDOC_SKIP_CODE_BLOCKS_PATCHED:
+        return
+
+    from babeldoc.format.pdf.document_il.midend.il_translator import ILTranslator
+
+    from pdf2zh_next.translator.base_translator import _looks_like_code_block
+
+    original_pre_translate_paragraph = ILTranslator.pre_translate_paragraph
+
+    def pre_translate_paragraph_with_code_skip(
+        self,
+        paragraph,
+        tracker,
+        page_font_map,
+        xobj_font_map,
+    ):
+        text, translate_input = original_pre_translate_paragraph(
+            self,
+            paragraph,
+            tracker,
+            page_font_map,
+            xobj_font_map,
+        )
+        if text is None:
+            return text, translate_input
+
+        translator = getattr(self.translation_config, "translator", None)
+        should_skip_code_block = getattr(translator, "should_skip_code_block", None)
+        if callable(should_skip_code_block):
+            should_skip = should_skip_code_block(text)
+        else:
+            should_skip = getattr(
+                translator, "skip_code_blocks", False
+            ) and _looks_like_code_block(text)
+
+        if should_skip:
+            logger.debug(
+                "Skip rewriting detected code block paragraph: %s",
+                getattr(paragraph, "debug_id", None),
+            )
+            tracker.set_output(text)
+            return None, None
+
+        return text, translate_input
+
+    ILTranslator.pre_translate_paragraph = pre_translate_paragraph_with_code_skip
+    _BABELDOC_SKIP_CODE_BLOCKS_PATCHED = True
+
 
 def _translate_wrapper(
     settings: SettingsModel,
@@ -136,11 +189,14 @@ def _translate_wrapper(
         # (cache race), producing many popups. Pre-filling the cache
         # prevents the subprocess call entirely.
         import sys
+
         if sys.platform == "win32":
             try:
                 import joblib.externals.loky.backend.context as _loky_ctx
+
                 if _loky_ctx.physical_cores_cache is None:
                     import os
+
                     _loky_ctx.physical_cores_cache = os.cpu_count()
                     logger.info(
                         "Pre-filled loky physical_cores_cache=%d to prevent "
@@ -531,6 +587,8 @@ def _get_glossaries(settings: SettingsModel) -> list[Glossary] | None:
 def create_babeldoc_config(settings: SettingsModel, file: Path) -> BabelDOCConfig:
     if not isinstance(settings, SettingsModel):
         raise ValueError(f"{type(settings)} is not SettingsModel")
+    if settings.pdf.skip_code_blocks:
+        _ensure_babeldoc_skip_code_blocks_patch()
     translator = get_translator(settings)
     if translator is None:
         raise ValueError("No translator found")

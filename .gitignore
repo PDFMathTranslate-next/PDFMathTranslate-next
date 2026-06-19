@@ -2,6 +2,8 @@ pdf2zh_files
 gui/pdf2zh_files
 gradio_files
 .gradio/
+.agents/
+.codex/
 tmp
 gui/gradio_files
 gui/tmp
@@ -47,6 +49,7 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .nox/
+.ruff_cache/
 .coverage
 .coverage.*
 .cache
@@ -130,6 +133,7 @@ celerybeat.pid
 
 # Environments
 .env
+.pre-commit-cache/
 .venv
 env/
 venv/

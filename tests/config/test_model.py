@@ -105,6 +105,29 @@ class TestPDFSettings:
         assert settings.watermark_output_mode == "watermarked"
         assert settings.max_pages_per_part is None
         assert settings.translate_table_text is True
+        assert settings.skip_code_blocks is False
+        assert settings.skip_code_blocks_llm is False
+
+    def test_skip_code_blocks_setting(self):
+        """Test skip code blocks setting conversion"""
+        settings = CLIEnvSettingsModel(
+            openai=True,
+            openai_detail={"openai_api_key": "test-key"},
+            pdf={"skip_code_blocks": True},
+        ).to_settings_model()
+
+        assert settings.pdf.skip_code_blocks is True
+
+    def test_skip_code_blocks_llm_setting(self):
+        """Test skip code blocks LLM setting conversion"""
+        settings = CLIEnvSettingsModel(
+            openai=True,
+            openai_detail={"openai_api_key": "test-key"},
+            pdf={"skip_code_blocks": True, "skip_code_blocks_llm": True},
+        ).to_settings_model()
+
+        assert settings.pdf.skip_code_blocks is True
+        assert settings.pdf.skip_code_blocks_llm is True
 
     def test_watermark_mode_validation(self):
         """Test watermark mode validation"""

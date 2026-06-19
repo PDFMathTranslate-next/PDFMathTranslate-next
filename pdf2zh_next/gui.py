@@ -88,7 +88,10 @@ def _gui_field_visible(
     dependency_field_name = _gui_dependency_field_name(
         field_name, visible_when["field"]
     )
-    return base_visible and field_values.get(dependency_field_name) == visible_when["equals"]
+    return (
+        base_visible
+        and field_values.get(dependency_field_name) == visible_when["equals"]
+    )
 
 
 def _gui_field_value(field, value):
@@ -620,6 +623,8 @@ def _build_translate_settings(
     split_short_lines = ui_inputs.get("split_short_lines")
     short_line_split_factor = ui_inputs.get("short_line_split_factor")
     translate_table_text = ui_inputs.get("translate_table_text")
+    skip_code_blocks = ui_inputs.get("skip_code_blocks")
+    skip_code_blocks_llm = ui_inputs.get("skip_code_blocks_llm")
     skip_scanned_detection = ui_inputs.get("skip_scanned_detection")
     ocr_workaround = ui_inputs.get("ocr_workaround")
     max_pages_per_part = ui_inputs.get("max_pages_per_part")
@@ -802,6 +807,8 @@ def _build_translate_settings(
         translate_settings.pdf.short_line_split_factor = float(short_line_split_factor)
 
     translate_settings.pdf.translate_table_text = translate_table_text
+    translate_settings.pdf.skip_code_blocks = skip_code_blocks
+    translate_settings.pdf.skip_code_blocks_llm = skip_code_blocks_llm
     translate_settings.pdf.skip_scanned_detection = skip_scanned_detection
     translate_settings.pdf.auto_enable_ocr_workaround = auto_enable_ocr_workaround
     translate_settings.pdf.only_include_translated_page = only_include_translated_page
@@ -950,7 +957,7 @@ def build_ui_inputs(*args):
             prompt, min_text_length, rpc_doclayout, custom_system_prompt_input, glossary_file,
             save_auto_extracted_glossary, enable_auto_term_extraction, primary_font_family, skip_clean,
             disable_rich_text_translate, enhance_compatibility, split_short_lines, short_line_split_factor,
-            translate_table_text, skip_scanned_detection, max_pages_per_part, formular_font_pattern,
+            translate_table_text, skip_code_blocks, skip_code_blocks_llm, skip_scanned_detection, max_pages_per_part, formular_font_pattern,
             formular_char_pattern, ignore_cache, state, ocr_workaround, auto_enable_ocr_workaround,
             only_include_translated_page, merge_alternating_line_numbers, remove_non_formula_lines,
             non_formula_line_iou_threshold, figure_table_protection_threshold, skip_formula_offset_calculation,
@@ -991,6 +998,8 @@ def build_ui_inputs(*args):
         "split_short_lines",
         "short_line_split_factor",
         "translate_table_text",
+        "skip_code_blocks",
+        "skip_code_blocks_llm",
         "skip_scanned_detection",
         "max_pages_per_part",
         "formular_font_pattern",
@@ -1513,7 +1522,7 @@ def update_preview(selected_label, state):
             gr.update(visible=False),
             gr.update(visible=False),
         )
-    
+
     # 1.5. Validate selected_label is in display_map (choices)
     # This prevents Gradio errors when value is not in choices
     if selected_label not in state.get("display_map", {}):
@@ -1711,7 +1720,9 @@ def on_file_clear(_files, state):
     if remaining_choices:
         # If there are translation results, show them in dropdown
         default_value = remaining_choices[0]
-        selector_update = gr.update(choices=remaining_choices, value=default_value, visible=True)
+        selector_update = gr.update(
+            choices=remaining_choices, value=default_value, visible=True
+        )
     else:
         # No files at all, hide dropdown
         default_value = None
@@ -1817,7 +1828,15 @@ def on_file_input_change(files, state, selected_label):
     )
 
     # Update preview + download buttons based on new selection
-    mono_path, preview_path, dual_path, glossary_path, vis_mono, vis_dual, vis_glossary = (
+    (
+        mono_path,
+        preview_path,
+        dual_path,
+        glossary_path,
+        vis_mono,
+        vis_dual,
+        vis_glossary,
+    ) = (
         update_preview(selector_value, state)
         if selector_value
         else (
@@ -2420,8 +2439,12 @@ with gr.Blocks(
         with gr.Row(elem_classes=["tab-main-row"], equal_height=True):
             # 左侧侧边栏
             with gr.Column(scale=0, min_width=70, elem_classes=["sidebar-nav"]):
-                btn_main_tab = gr.Button("🚀", variant="primary", elem_classes=["sidebar-btn"])
-                btn_settings_tab = gr.Button("⚙️", variant="secondary", elem_classes=["sidebar-btn"])
+                btn_main_tab = gr.Button(
+                    "🚀", variant="primary", elem_classes=["sidebar-btn"]
+                )
+                btn_settings_tab = gr.Button(
+                    "⚙️", variant="secondary", elem_classes=["sidebar-btn"]
+                )
 
             # 右侧主内容区域：再拆成“主页”和“设置”两个分组
             with gr.Column(scale=1):
@@ -2454,7 +2477,9 @@ with gr.Blocks(
                                 elem_classes=["uploaded-files-list"],
                             )
 
-                            gr.Markdown(_("## Translation Options"), elem_classes=["tab-title"])
+                            gr.Markdown(
+                                _("## Translation Options"), elem_classes=["tab-title"]
+                            )
 
                             # 语言选择与交换按钮所在的一行
                             with gr.Row(elem_classes=["lang-row"]):
@@ -2477,7 +2502,9 @@ with gr.Blocks(
                                 )
 
                             # 主界面左侧保留翻译按钮和已翻译下载区
-                            output_title = gr.Markdown(_("## Translated"), visible=False)
+                            output_title = gr.Markdown(
+                                _("## Translated"), visible=False
+                            )
                             output_file_mono = gr.File(
                                 label=_("Download Translation (Mono)"), visible=False
                             )
@@ -2533,7 +2560,9 @@ with gr.Blocks(
                             )
 
                 # 其余高级配置都移动到设置页
-                with gr.Group(visible=False, elem_classes=["settings-container"]) as tab_settings:
+                with gr.Group(
+                    visible=False, elem_classes=["settings-container"]
+                ) as tab_settings:
                     # 界面语言切换只在“设置”页展示
                     lang_selector.render()
                     siliconflow_free_acknowledgement = gr.Markdown(
@@ -2651,8 +2680,10 @@ with gr.Blocks(
                                     detail_text_input_fields.append(field)
                                     visible_when = gui_extra.get("visible_when")
                                     if visible_when:
-                                        dependency_field_name = _gui_dependency_field_name(
-                                            field_name, visible_when["field"]
+                                        dependency_field_name = (
+                                            _gui_dependency_field_name(
+                                                field_name, visible_when["field"]
+                                            )
                                         )
                                         dependency_input = (
                                             detail_visibility_dependency_inputs.get(
@@ -2669,7 +2700,9 @@ with gr.Blocks(
                                                     field_input,
                                                 )
                                             )
-                                    detail_visibility_dependency_inputs[field_name] = field_input
+                                    detail_visibility_dependency_inputs[field_name] = (
+                                        field_input
+                                    )
                                     __gui_service_arg_names.append(field_name)
                                     translation_engine_arg_inputs.append(field_input)
                     with gr.Group() as rate_limit_settings:
@@ -2812,7 +2845,9 @@ with gr.Blocks(
                                         type_hint = field.annotation
                                         original_type = typing.get_origin(type_hint)
                                         type_args = typing.get_args(type_hint)
-                                        value = getattr(term_detail_settings, field_name)
+                                        value = getattr(
+                                            term_detail_settings, field_name
+                                        )
                                         gui_extra = _field_gui_extra(field)
                                         term_field_values = {
                                             name: getattr(term_detail_settings, name)
@@ -2871,17 +2906,19 @@ with gr.Blocks(
                                         ].append(term_detail_index)
                                         term_detail_index += 1
                                         term_detail_text_inputs.append(field_input)
-                                        term_detail_text_input_field_names.append(field_name)
+                                        term_detail_text_input_field_names.append(
+                                            field_name
+                                        )
                                         term_detail_text_input_fields.append(field)
                                         visible_when = gui_extra.get("visible_when")
                                         if visible_when:
-                                            dependency_field_name = _gui_dependency_field_name(
-                                                field_name, visible_when["field"]
-                                            )
-                                            dependency_input = (
-                                                term_detail_visibility_dependency_inputs.get(
-                                                    dependency_field_name
+                                            dependency_field_name = (
+                                                _gui_dependency_field_name(
+                                                    field_name, visible_when["field"]
                                                 )
+                                            )
+                                            dependency_input = term_detail_visibility_dependency_inputs.get(
+                                                dependency_field_name
                                             )
                                             if dependency_input is not None:
                                                 term_detail_visibility_dependency_events.append(
@@ -2893,9 +2930,13 @@ with gr.Blocks(
                                                         field_input,
                                                     )
                                                 )
-                                        term_detail_visibility_dependency_inputs[field_name] = field_input
+                                        term_detail_visibility_dependency_inputs[
+                                            field_name
+                                        ] = field_input
                                         __gui_term_service_arg_names.append(field_name)
-                                        translation_engine_arg_inputs.append(field_input)
+                                        translation_engine_arg_inputs.append(
+                                            field_input
+                                        )
 
                             term_rate_limit_mode = gr.Radio(
                                 choices=[
@@ -2964,17 +3005,17 @@ with gr.Blocks(
                     )
 
                     page_input = gr.Textbox(
-                    label=_("Page range (e.g., 1,3,5-10,-5)"),
-                    visible=False,
-                    interactive=True,
-                    placeholder=_("e.g., 1,3,5-10"),
+                        label=_("Page range (e.g., 1,3,5-10,-5)"),
+                        visible=False,
+                        interactive=True,
+                        placeholder=_("e.g., 1,3,5-10"),
                     )
 
                     only_include_translated_page = gr.Checkbox(
-                    label=_("Only include translated pages in the output PDF."),
-                    info=_("Effective only when a page range is specified."),
-                    value=settings.pdf.only_include_translated_page,
-                    interactive=True,
+                        label=_("Only include translated pages in the output PDF."),
+                        info=_("Effective only when a page range is specified."),
+                        value=settings.pdf.only_include_translated_page,
+                        interactive=True,
                     )
 
                     # PDF Output Options
@@ -3017,12 +3058,12 @@ with gr.Blocks(
                     # Additional translation options
                     with gr.Accordion(_("Advanced Options"), open=False):
                         prompt = gr.Textbox(
-                        label=_("Custom prompt for translation"),
-                        value="",
-                        visible=False,
-                        interactive=True,
-                        placeholder=_("Custom prompt for the translator"),
-                    )
+                            label=_("Custom prompt for translation"),
+                            value="",
+                            visible=False,
+                            interactive=True,
+                            placeholder=_("Custom prompt for the translator"),
+                        )
 
                         # New Textbox for custom_system_prompt
                         custom_system_prompt_input = gr.Textbox(
@@ -3043,7 +3084,9 @@ with gr.Blocks(
                         )
 
                         rpc_doclayout = gr.Textbox(
-                            label=_("RPC service for document layout analysis (optional)"),
+                            label=_(
+                                "RPC service for document layout analysis (optional)"
+                            ),
                             value=settings.translation.rpc_doclayout or "",
                             visible=False,
                             interactive=True,
@@ -3109,7 +3152,9 @@ with gr.Blocks(
                         )
 
                         split_short_lines = gr.Checkbox(
-                            label=_("Force split short lines into different paragraphs"),
+                            label=_(
+                                "Force split short lines into different paragraphs"
+                            ),
                             value=settings.pdf.split_short_lines,
                             interactive=True,
                         )
@@ -3127,6 +3172,20 @@ with gr.Blocks(
                         translate_table_text = gr.Checkbox(
                             label=_("Translate table text (experimental)"),
                             value=settings.pdf.translate_table_text,
+                            interactive=True,
+                        )
+
+                        skip_code_blocks = gr.Checkbox(
+                            label=_("Skip code blocks (experimental)"),
+                            value=settings.pdf.skip_code_blocks,
+                            interactive=True,
+                        )
+
+                        skip_code_blocks_llm = gr.Checkbox(
+                            label=_(
+                                "Use LLM for ambiguous code detection (extra API calls)"
+                            ),
+                            value=settings.pdf.skip_code_blocks_llm,
                             interactive=True,
                         )
 
@@ -3235,7 +3294,11 @@ with gr.Blocks(
                         )
 
                     # （已移动到 tab_main 中）这里保留设置页底部的“保存设置”和技术说明
-                    save_btn = gr.Button(_("Save Settings"), variant="secondary", elem_classes=["save-settings-btn"])
+                    save_btn = gr.Button(
+                        _("Save Settings"),
+                        variant="secondary",
+                        elem_classes=["save-settings-btn"],
+                    )
 
                     tech_details = gr.Markdown(
                         tech_details_string,
@@ -3695,6 +3758,8 @@ with gr.Blocks(
             split_short_lines,
             short_line_split_factor,
             translate_table_text,
+            skip_code_blocks,
+            skip_code_blocks_llm,
             skip_scanned_detection,
             max_pages_per_part,
             formular_font_pattern,
@@ -3776,19 +3841,30 @@ with gr.Blocks(
                 choices = []
             else:
                 choices = list(state.get("display_map", {}).keys())
-            
+
             # If selected_label is not in choices, reset it
             if selected_label and selected_label not in choices:
                 # Reset to first available choice or None
                 corrected_label = choices[0] if choices else None
                 # Return preview update + selector update
-                preview_results = update_preview(corrected_label, state) if corrected_label else (
-                    None, None, None, None,
-                    gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
+                preview_results = (
+                    update_preview(corrected_label, state)
+                    if corrected_label
+                    else (
+                        None,
+                        None,
+                        None,
+                        None,
+                        gr.update(visible=False),
+                        gr.update(visible=False),
+                        gr.update(visible=False),
+                    )
                 )
                 return (
                     *preview_results,
-                    gr.update(choices=choices, value=corrected_label, visible=bool(choices)),  # Fix selector
+                    gr.update(
+                        choices=choices, value=corrected_label, visible=bool(choices)
+                    ),  # Fix selector
                 )
             else:
                 # Normal case: selected_label is valid
@@ -3943,6 +4019,8 @@ with gr.Blocks(
                     )
                 )
                 updates.append(gr.update(value=fresh_settings.pdf.translate_table_text))
+                updates.append(gr.update(value=fresh_settings.pdf.skip_code_blocks))
+                updates.append(gr.update(value=fresh_settings.pdf.skip_code_blocks_llm))
                 updates.append(
                     gr.update(value=fresh_settings.pdf.skip_scanned_detection)
                 )
@@ -4092,7 +4170,8 @@ with gr.Blocks(
                         visible = _gui_field_visible(
                             field_name,
                             field,
-                            term_metadata.translate_engine_type == selected_term_service,
+                            term_metadata.translate_engine_type
+                            == selected_term_service,
                             term_field_values,
                         )
                         value = _gui_field_value(field, value)
@@ -4319,7 +4398,7 @@ with gr.Blocks(
             
             window.addEventListener('resize', adjustPDFCanvasScale);
             })();
-            """
+            """,
         )
 
 

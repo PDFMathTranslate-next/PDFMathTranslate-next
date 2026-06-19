@@ -80,6 +80,23 @@ class TestBuildArgsParser:
         assert args.deepseek is True
         assert args.deepseek_thinking_mode is MagicDefault
 
+    def test_skip_code_blocks_cli_flag(self):
+        """Test skip code blocks can be enabled from CLI."""
+        parser, _ = build_args_parser()
+
+        args = parser.parse_args(["--skip-code-blocks"])
+
+        assert args.skip_code_blocks is True
+
+    def test_skip_code_blocks_llm_cli_flag(self):
+        """Test LLM code block detection can be enabled from CLI."""
+        parser, _ = build_args_parser()
+
+        args = parser.parse_args(["--skip-code-blocks-llm"])
+
+        assert args.skip_code_blocks_llm is True
+
+
 class TestConfigManager:
     def test_singleton(self):
         """Test ConfigManager singleton pattern"""
@@ -199,7 +216,9 @@ class TestConfigManager:
         }
         config_args = {"deepseek_detail": {"deepseek_thinking_mode": "enabled"}}
 
-        merged = cm.merge_settings([cm.parse_dict_vars(dict_vars=cli_args), config_args])
+        merged = cm.merge_settings(
+            [cm.parse_dict_vars(dict_vars=cli_args), config_args]
+        )
 
         assert merged["deepseek_detail"]["deepseek_thinking_mode"] == "enabled"
 
@@ -228,7 +247,9 @@ class TestConfigManager:
             }
         }
 
-        merged = cm.merge_settings([cm.parse_dict_vars(dict_vars=cli_args), config_args])
+        merged = cm.merge_settings(
+            [cm.parse_dict_vars(dict_vars=cli_args), config_args]
+        )
 
         assert merged["deepseek_detail"]["deepseek_thinking_mode"] == "disabled"
         assert merged["deepseek_detail"]["deepseek_reasoning_effort"] == "max"
@@ -258,12 +279,13 @@ class TestConfigManager:
             }
         }
 
-        merged = cm.merge_settings([cm.parse_dict_vars(dict_vars=cli_args), config_args])
+        merged = cm.merge_settings(
+            [cm.parse_dict_vars(dict_vars=cli_args), config_args]
+        )
 
         assert merged["term_deepseek"] is True
         assert (
-            merged["term_deepseek_detail"]["term_deepseek_thinking_mode"]
-            == "disabled"
+            merged["term_deepseek_detail"]["term_deepseek_thinking_mode"] == "disabled"
         )
         assert merged["term_deepseek_detail"]["term_deepseek_reasoning_effort"] == "max"
 
@@ -510,7 +532,9 @@ class TestConfigManager:
         assert "deepseek_reasoning_effort" in default_config["deepseek_detail"]
         assert default_config["deepseek_detail"]["deepseek_thinking_mode"] is None
         assert "term_deepseek_thinking_mode" in default_config["term_deepseek_detail"]
-        assert "term_deepseek_reasoning_effort" in default_config["term_deepseek_detail"]
+        assert (
+            "term_deepseek_reasoning_effort" in default_config["term_deepseek_detail"]
+        )
         assert (
             default_config["term_deepseek_detail"]["term_deepseek_thinking_mode"]
             is None

@@ -176,6 +176,13 @@ class PDFSettings(BaseModel):
     translate_table_text: bool = Field(
         default=True, description="Translate table text (experimental)"
     )
+    skip_code_blocks: bool = Field(
+        default=False, description="Skip translating high-confidence code blocks"
+    )
+    skip_code_blocks_llm: bool = Field(
+        default=False,
+        description="Use LLM for ambiguous code block detection",
+    )
     skip_scanned_detection: bool = Field(
         default=False, description="Skip scanned detection"
     )

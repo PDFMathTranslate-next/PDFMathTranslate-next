@@ -4358,6 +4358,7 @@ def setup_gui(
     share: bool = False,
     auth_file: str | None = None,
     welcome_page: str | None = None,
+    server_name: str = "0.0.0.0",
     server_port=7860,
     inbrowser: bool = True,
 ) -> None:
@@ -4367,6 +4368,7 @@ def setup_gui(
     Inputs:
         - share: Whether to share the GUI
         - auth_file: The authentication file
+        - server_name: The host to run the server on
         - server_port: The port to run the server on
 
     Returns:
@@ -4381,7 +4383,7 @@ def setup_gui(
     if not auth_file or not user_list:
         try:
             demo.launch(
-                server_name="0.0.0.0",
+                server_name=server_name,
                 debug=True,
                 inbrowser=inbrowser,
                 share=share,
@@ -4390,7 +4392,7 @@ def setup_gui(
             )
         except Exception:
             print(
-                "Error launching GUI using 0.0.0.0.\nThis may be caused by global mode of proxy software."
+                f"Error launching GUI using {server_name}.\nThis may be caused by global mode of proxy software."
             )
             try:
                 demo.launch(
@@ -4415,7 +4417,7 @@ def setup_gui(
     else:
         try:
             demo.launch(
-                server_name="0.0.0.0",
+                server_name=server_name,
                 debug=True,
                 inbrowser=inbrowser,
                 share=share,
@@ -4426,7 +4428,7 @@ def setup_gui(
             )
         except Exception:
             print(
-                "Error launching GUI using 0.0.0.0.\nThis may be caused by global mode of proxy software."
+                f"Error launching GUI using {server_name}.\nThis may be caused by global mode of proxy software."
             )
             try:
                 demo.launch(

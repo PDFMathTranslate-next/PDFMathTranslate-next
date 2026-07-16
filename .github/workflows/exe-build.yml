@@ -90,8 +90,8 @@ jobs:
 
           Write-Host "==== 查找 PyStand.exe 并复制到 build ===="
           $destExe = "./build/${{ matrix.exe_name }}"
-          $pystandExe = (Get-ChildItem -Path "./dep_build/PyStand" -Recurse -Filter "PyStand.exe" | Select-Object -First 1).FullName
-          if (Test-Path $pystandExe) {
+          $pystandExe = Get-ChildItem -Path "./dep_build/PyStand/${{ matrix.pystand_dir }}" -Recurse -Filter "PyStand.exe" | Select-Object -First 1 -ExpandProperty FullName
+          if ($pystandExe -and (Test-Path -LiteralPath $pystandExe)) {
               Copy-Item -Path $pystandExe -Destination $destExe -Force
               Write-Host "已复制: $($pystandExe)"
           } else {

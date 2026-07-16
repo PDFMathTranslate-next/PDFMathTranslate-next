@@ -12,8 +12,26 @@ on:
 env:
   WIN_EXE_PYTHON_VERSION: 3.13.3
 jobs:
-  build-win64-exe:
-    runs-on: windows-latest
+  build-win-exe:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: windows-latest
+            python_embed: amd64
+            pystand_dir: PyStand-x64-CLI
+            artifact_name: win64-exe
+            exe_name: pdf2zh.exe
+          - arch: arm64
+            runner: windows-11-arm
+            python_embed: arm64
+            pystand_dir: PyStand-arm64-CLI
+            artifact_name: win-arm64-exe
+            exe_name: pdf2zh-arm64.exe
+
+    runs-on: ${{ matrix.runner }}
+
     steps:
       - name: checkout babeldoc metadata
         uses: actions/checkout@v6
@@ -57,9 +75,9 @@ jobs:
           Write-Host "==== 复制代码到 dep_build ===="
           Get-ChildItem -Path "./" -Exclude "dep_build", "build" | Copy-Item -Destination "./dep_build" -Recurse -Force
 
-          Write-Host "==== 下载并解压 Python ${{ env.WIN_EXE_PYTHON_VERSION }} ===="
-          Write-Host "pythonUrl: https://www.python.org/ftp/python/${{ env.WIN_EXE_PYTHON_VERSION }}/python-${{ env.WIN_EXE_PYTHON_VERSION }}-embed-amd64.zip"
-          $pythonUrl = "https://www.python.org/ftp/python/${{ env.WIN_EXE_PYTHON_VERSION }}/python-${{ env.WIN_EXE_PYTHON_VERSION }}-embed-amd64.zip"
+          Write-Host "==== 下载并解压 Python ${{ env.WIN_EXE_PYTHON_VERSION }} (${{ matrix.arch }}) ===="
+          Write-Host "pythonUrl: https://www.python.org/ftp/python/${{ env.WIN_EXE_PYTHON_VERSION }}/python-${{ env.WIN_EXE_PYTHON_VERSION }}-embed-${{ matrix.python_embed }}.zip"
+          $pythonUrl = "https://www.python.org/ftp/python/${{ env.WIN_EXE_PYTHON_VERSION }}/python-${{ env.WIN_EXE_PYTHON_VERSION }}-embed-${{ matrix.python_embed }}.zip"
           $pythonZip = "./dep_build/python.zip"
           Invoke-WebRequest -Uri $pythonUrl -OutFile $pythonZip
           Expand-Archive -Path $pythonZip -DestinationPath "./build/runtime" -Force
@@ -71,8 +89,8 @@ jobs:
           Expand-Archive -Path $pystandZip -DestinationPath "./dep_build/PyStand" -Force
 
           Write-Host "==== 复制 PyStand.exe 到 build 并重命名 ===="
-          $pystandExe = "./dep_build/PyStand/PyStand-x64-CLI/PyStand.exe"
-          $destExe = "./build/pdf2zh.exe"
+          $pystandExe = "./dep_build/PyStand/${{ matrix.pystand_dir }}/PyStand.exe"
+          $destExe = "./build/${{ matrix.exe_name }}"
           if (Test-Path $pystandExe) {
               Copy-Item -Path $pystandExe -Destination $destExe -Force
           } else {
@@ -105,16 +123,30 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v5
         with:
-          name: win64-exe
+          name: ${{ matrix.artifact_name }}
           path: ./build
           if-no-files-found: error
           compression-level: 9
           include-hidden-files: true
 
-  test-win64-exe:
-    needs: 
-      - build-win64-exe
-    runs-on: windows-latest
+  test-win-exe:
+    needs:
+      - build-win-exe
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: windows-latest
+            artifact_name: win64-exe
+            exe_name: pdf2zh.exe
+          - arch: arm64
+            runner: windows-11-arm
+            artifact_name: win-arm64-exe
+            exe_name: pdf2zh-arm64.exe
+
+    runs-on: ${{ matrix.runner }}
+
     steps:
       - name: 检出代码
         uses: actions/checkout@v6
@@ -122,20 +154,20 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v6
         with:
-          name: win64-exe
+          name: ${{ matrix.artifact_name }}
           path: ./build
 
       - name: Test show version
         run: |
-          ./build/pdf2zh.exe --version
-      
+          ./build/${{ matrix.exe_name }} --version
+
       - name: Test - Translate a PDF file with plain text only
         run: |
-          ./build/pdf2zh.exe ./test/file/translate.cli.plain.text.pdf --output ./test/file
+          ./build/${{ matrix.exe_name }} ./test/file/translate.cli.plain.text.pdf --output ./test/file
 
       - name: Test - Translate a PDF file figure
         run: |
-          ./build/pdf2zh.exe ./test/file/translate.cli.text.with.figure.pdf --output ./test/file
+          ./build/${{ matrix.exe_name }} ./test/file/translate.cli.text.with.figure.pdf --output ./test/file
 
       - name: Delete offline assets and cache
         shell: pwsh
@@ -149,7 +181,7 @@ jobs:
           } else {
             Write-Host "未找到离线资源包"
           }
-          
+
           Write-Host "==== 删除缓存目录 ===="
           $cachePath = "$env:USERPROFILE/.cache/babeldoc"
           if (Test-Path $cachePath) {
@@ -161,12 +193,10 @@ jobs:
 
       - name: Test - Translate without offline assets
         run: |
-          ./build/pdf2zh.exe ./test/file/translate.cli.plain.text.pdf --output ./test/file
-          
+          ./build/${{ matrix.exe_name }} ./test/file/translate.cli.plain.text.pdf --output ./test/file
+
       - name: Upload test results
         uses: actions/upload-artifact@v5
         with:
-          name: test-results
+          name: test-results-${{ matrix.arch }}
           path: ./test/file/
-
-  

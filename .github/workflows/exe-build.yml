@@ -88,13 +88,16 @@ jobs:
           Invoke-WebRequest -Uri $pystandUrl -OutFile $pystandZip
           Expand-Archive -Path $pystandZip -DestinationPath "./dep_build/PyStand" -Force
 
-          Write-Host "==== 复制 PyStand.exe 到 build 并重命名 ===="
-          $pystandExe = "./dep_build/PyStand/${{ matrix.pystand_dir }}/PyStand.exe"
+          Write-Host "==== 查找 PyStand.exe 并复制到 build ===="
           $destExe = "./build/${{ matrix.exe_name }}"
+          $pystandExe = (Get-ChildItem -Path "./dep_build/PyStand" -Recurse -Filter "PyStand.exe" | Select-Object -First 1).FullName
           if (Test-Path $pystandExe) {
               Copy-Item -Path $pystandExe -Destination $destExe -Force
+              Write-Host "已复制: $($pystandExe)"
           } else {
               Write-Host "错误: PyStand.exe 未找到！"
+              Write-Host "==== 当前 PyStand 解压内容 ===="
+              Get-ChildItem -Path "./dep_build/PyStand" -Recurse | Select-Object FullName
               exit 1
           }
           Write-Host "==== 创建 Python venv 在 dep_build ===="

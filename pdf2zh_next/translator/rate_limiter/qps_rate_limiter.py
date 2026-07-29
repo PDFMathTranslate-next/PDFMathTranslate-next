@@ -25,17 +25,15 @@ class QPSRateLimiter(BaseRateLimiter):
         """
         with self.lock:
             now = time.monotonic()
-
             wait_duration = self.next_request_time - now
-            if wait_duration > 0:
-                time.sleep(wait_duration)
-
-            # Update the next allowed request time.
-            # If the limiter has been idle, the next request should start from 'now'.
-            now = time.monotonic()
+            if wait_duration <= 0:
+                wait_duration = 0
+            # Reserve the next slot before releasing the lock / sleeping.
             self.next_request_time = (
                 max(self.next_request_time, now) + self.min_interval
             )
+        if wait_duration > 0:
+            time.sleep(wait_duration)
 
     def set_max_qps(self, max_qps: int):
         """

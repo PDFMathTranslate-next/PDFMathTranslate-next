@@ -1,4 +1,5 @@
 import logging
+import os
 
 import httpx
 import openai
@@ -15,6 +16,38 @@ from tenacity import wait_exponential
 logger = logging.getLogger(__name__)
 
 
+def _build_http_client(timeout: float | None = None) -> httpx.Client:
+    """Build httpx client with explicit proxy, immune to no_proxy=*."""
+    limits = httpx.Limits(max_connections=None, max_keepalive_connections=None)
+    # Separate connect vs read: connect should fail fast; read allows long generations.
+    read_s = float(timeout) if timeout else 180.0
+    http_timeout = httpx.Timeout(connect=30.0, read=read_s, write=60.0, pool=60.0)
+    disable = os.environ.get("PDF2ZH_DISABLE_PROXY", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+        "on",
+    )
+    proxy = (
+        os.environ.get("PDF2ZH_HTTP_PROXY")
+        or os.environ.get("HTTPS_PROXY")
+        or os.environ.get("HTTP_PROXY")
+        or os.environ.get("https_proxy")
+        or os.environ.get("http_proxy")
+        or ""
+    ).strip()
+    if disable:
+        # Force direct connect; ignore env / system proxy.
+        return httpx.Client(trust_env=False, limits=limits, timeout=http_timeout)
+    if proxy:
+        # Explicit proxy ignores no_proxy=* (set by gpt_academic main.py).
+        logger.info("OpenAITranslator using proxy=%s timeout_read=%s", proxy, read_s)
+        return httpx.Client(
+            proxy=proxy, trust_env=False, limits=limits, timeout=http_timeout
+        )
+    return httpx.Client(limits=limits, timeout=http_timeout)
+
+
 class OpenAITranslator(BaseTranslator):
     # https://github.com/openai/openai-python
     name = "openai"
@@ -26,15 +59,13 @@ class OpenAITranslator(BaseTranslator):
     ):
         super().__init__(settings, rate_limiter)
         self.timeout = settings.translate_engine_settings.openai_timeout
+        timeout_f = float(self.timeout) if self.timeout else 180.0
         self.client = openai.OpenAI(
             base_url=settings.translate_engine_settings.openai_base_url,
             api_key=settings.translate_engine_settings.openai_api_key,
-            timeout=float(self.timeout) if self.timeout else openai.NOT_GIVEN,
-            http_client=httpx.Client(
-                limits=httpx.Limits(
-                    max_connections=None, max_keepalive_connections=None
-                )
-            ),
+            timeout=timeout_f,
+            http_client=_build_http_client(timeout_f),
+            max_retries=0,  # retries handled by tenacity below
         )
         self.options = {}
         self.temperature = settings.translate_engine_settings.openai_temperature
@@ -74,9 +105,17 @@ class OpenAITranslator(BaseTranslator):
             self.add_cache_impact_parameters("enable_json_mode", self.enable_json_mode)
 
     @retry(
-        retry=retry_if_exception_type(openai.RateLimitError),
-        stop=stop_after_attempt(100),
-        wait=wait_exponential(multiplier=1, min=1, max=15),
+        retry=retry_if_exception_type(
+            (
+                openai.RateLimitError,
+                openai.APITimeoutError,
+                openai.APIConnectionError,
+                httpx.TimeoutException,
+                httpx.TransportError,
+            )
+        ),
+        stop=stop_after_attempt(8),
+        wait=wait_exponential(multiplier=1, min=1, max=20),
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
     def do_translate(self, text, rate_limit_params: dict = None) -> str:
@@ -119,9 +158,17 @@ class OpenAITranslator(BaseTranslator):
         return message
 
     @retry(
-        retry=retry_if_exception_type(openai.RateLimitError),
-        stop=stop_after_attempt(100),
-        wait=wait_exponential(multiplier=1, min=1, max=15),
+        retry=retry_if_exception_type(
+            (
+                openai.RateLimitError,
+                openai.APITimeoutError,
+                openai.APIConnectionError,
+                httpx.TimeoutException,
+                httpx.TransportError,
+            )
+        ),
+        stop=stop_after_attempt(8),
+        wait=wait_exponential(multiplier=1, min=1, max=20),
         before_sleep=before_sleep_log(logger, logging.WARNING),
     )
     def do_llm_translate(self, text, rate_limit_params: dict = None):

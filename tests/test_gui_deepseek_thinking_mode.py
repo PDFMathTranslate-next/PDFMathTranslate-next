@@ -88,7 +88,7 @@ def _build_settings(tmp_path: Path, ui_inputs: dict, gui, save_mode=None):
 def test_gui_deepseek_thinking_field_declares_mode_dropdown():
     mode_field = DeepSeekSettings.model_fields["deepseek_thinking_mode"]
 
-    assert mode_field.default is None
+    assert mode_field.default == "disabled"
     assert mode_field.json_schema_extra["gui"] == {
         "widget": "dropdown",
         "choices": [
@@ -279,6 +279,7 @@ def test_unforced_term_deepseek_omits_thinking_body(tmp_path, monkeypatch):
             term_deepseek_model="deepseek-v4-flash",
             term_deepseek_api_key="dummy-key",
             term_deepseek_enable_json_mode=False,
+            term_deepseek_thinking_mode=None,
             term_deepseek_reasoning_effort="max",
         ),
         gui,

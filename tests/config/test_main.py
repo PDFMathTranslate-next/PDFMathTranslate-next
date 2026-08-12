@@ -508,12 +508,12 @@ class TestConfigManager:
         assert isinstance(default_config["translation"]["qps"], int | float)
         assert "deepseek_thinking_mode" in default_config["deepseek_detail"]
         assert "deepseek_reasoning_effort" in default_config["deepseek_detail"]
-        assert default_config["deepseek_detail"]["deepseek_thinking_mode"] is None
+        assert default_config["deepseek_detail"]["deepseek_thinking_mode"] == "disabled"
         assert "term_deepseek_thinking_mode" in default_config["term_deepseek_detail"]
         assert "term_deepseek_reasoning_effort" in default_config["term_deepseek_detail"]
         assert (
             default_config["term_deepseek_detail"]["term_deepseek_thinking_mode"]
-            is None
+            == "disabled"
         )
 
     def test_settings_not_initialized(self):

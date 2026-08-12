@@ -196,8 +196,11 @@ class DeepSeekSettings(BaseModel):
         default=None, description="Enable JSON mode for DeepSeek service"
     )
     deepseek_thinking_mode: str | None = Field(
-        default=None,
-        description="Thinking mode for DeepSeek v4 models (enabled/disabled)",
+        default="disabled",
+        description=(
+            "Thinking mode for DeepSeek v4 models (enabled/disabled); "
+            "defaults to disabled"
+        ),
         json_schema_extra={
             "gui": {
                 "widget": "dropdown",

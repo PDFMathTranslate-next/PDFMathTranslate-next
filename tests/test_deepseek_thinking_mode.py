@@ -58,6 +58,12 @@ def build_translator(settings: SettingsModel) -> tuple[OpenAITranslator, FakeOpe
     return translator, fake_client
 
 
+def test_deepseek_settings_default_to_disabled_thinking_mode():
+    settings = DeepSeekSettings(deepseek_api_key="dummy-key")
+
+    assert settings.deepseek_thinking_mode == "disabled"
+
+
 def test_deepseek_v4_unforced_omits_extra_body_and_reasoning_effort():
     settings = build_deepseek_settings("deepseek-v4-flash")
     translator, fake_client = build_translator(settings)

@@ -196,13 +196,16 @@ class DeepSeekSettings(BaseModel):
         default=None, description="Enable JSON mode for DeepSeek service"
     )
     deepseek_thinking_mode: str | None = Field(
-        default=None,
-        description="Thinking mode for DeepSeek v4 models (enabled/disabled)",
+        default="disabled",
+        description=(
+            "Thinking mode for DeepSeek (enabled/disabled); only enabled turns "
+            "thinking on, and unset defaults to disabled"
+        ),
         json_schema_extra={
             "gui": {
                 "widget": "dropdown",
                 "choices": [
-                    ("Unset", None),
+                    ("Unset (defaults to disabled)", None),
                     ("enabled", "enabled"),
                     ("disabled", "disabled"),
                 ],
@@ -249,14 +252,13 @@ class DeepSeekSettings(BaseModel):
             openai_base_url="https://api.deepseek.com/v1",
             openai_enable_json_mode=self.deepseek_enable_json_mode,
         )
-        if self.deepseek_model and self.deepseek_model.startswith("deepseek-v4-"):
-            if self.deepseek_thinking_mode == "enabled":
-                settings._openai_extra_body = {"thinking": {"type": "enabled"}}
-                if self.deepseek_reasoning_effort:
-                    settings.openai_reasoning_effort = self.deepseek_reasoning_effort
-                    settings.openai_send_reasoning_effort = True
-            elif self.deepseek_thinking_mode == "disabled":
-                settings._openai_extra_body = {"thinking": {"type": "disabled"}}
+        if self.deepseek_thinking_mode == "enabled":
+            settings._openai_extra_body = {"thinking": {"type": "enabled"}}
+            if self.deepseek_reasoning_effort:
+                settings.openai_reasoning_effort = self.deepseek_reasoning_effort
+                settings.openai_send_reasoning_effort = True
+        elif self.deepseek_thinking_mode in (None, "disabled"):
+            settings._openai_extra_body = {"thinking": {"type": "disabled"}}
         return settings
 
 

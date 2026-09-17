@@ -88,16 +88,31 @@ def _build_settings(tmp_path: Path, ui_inputs: dict, gui, save_mode=None):
 def test_gui_deepseek_thinking_field_declares_mode_dropdown():
     mode_field = DeepSeekSettings.model_fields["deepseek_thinking_mode"]
 
-    assert mode_field.default is None
+    assert mode_field.default == "disabled"
     assert mode_field.json_schema_extra["gui"] == {
         "widget": "dropdown",
         "choices": [
-            ("Unset", None),
+            ("Unset (defaults to disabled)", None),
             ("enabled", "enabled"),
             ("disabled", "disabled"),
         ],
         "preserve_current_value": True,
     }
+
+
+def test_gui_deepseek_mode_updates_preserve_enabled_and_unset(monkeypatch):
+    gui = _gui(monkeypatch)
+    field = DeepSeekSettings.model_fields["deepseek_thinking_mode"]
+
+    enabled_update = gui._gui_field_update(field, visible=True, current_value="enabled")
+    unset_update = gui._gui_field_update(field, visible=True, current_value=None)
+
+    assert enabled_update["value"] == "enabled"
+    assert unset_update["value"] is None
+    assert unset_update["choices"][0] == (
+        "Unset (defaults to disabled)",
+        None,
+    )
 
 
 def test_gui_deepseek_reasoning_effort_metadata_controls_visibility(monkeypatch):
@@ -155,8 +170,14 @@ def test_term_deepseek_metadata_preserves_prefixed_visibility(monkeypatch):
     term_model = TERM_EXTRACTION_ENGINE_METADATA_MAP[
         "DeepSeek"
     ].term_setting_model_type
+    term_mode_field = term_model.model_fields["term_deepseek_thinking_mode"]
     term_field = term_model.model_fields["term_deepseek_reasoning_effort"]
 
+    assert term_mode_field.default == "disabled"
+    assert term_mode_field.json_schema_extra["gui"]["choices"][0] == (
+        "Unset (defaults to disabled)",
+        None,
+    )
     assert term_field.json_schema_extra["gui"]["widget"] == "dropdown"
     assert term_field.json_schema_extra["gui"]["choices"] == ["high", "max"]
     assert term_field.json_schema_extra["gui"]["visible_when"] == {
@@ -177,18 +198,39 @@ def test_term_deepseek_metadata_preserves_prefixed_visibility(monkeypatch):
     ) is True
 
 
-def test_gui_unforced_deepseek_current_run_omits_thinking_body(tmp_path, monkeypatch):
+def test_gui_new_deepseek_model_uses_disabled_and_hides_effort(monkeypatch):
+    gui = _gui(monkeypatch)
+    model = DeepSeekSettings()
+    mode_field = DeepSeekSettings.model_fields["deepseek_thinking_mode"]
+    effort_field = DeepSeekSettings.model_fields["deepseek_reasoning_effort"]
+
+    assert model.deepseek_thinking_mode == "disabled"
+    assert gui._gui_field_value(mode_field, model.deepseek_thinking_mode) == "disabled"
+    assert gui._gui_field_visible(
+        "deepseek_reasoning_effort",
+        effort_field,
+        True,
+        {"deepseek_thinking_mode": model.deepseek_thinking_mode},
+    ) is False
+
+
+def test_gui_unset_deepseek_current_run_sends_disabled_without_effort(
+    tmp_path, monkeypatch
+):
     gui = _gui(monkeypatch)
 
     settings = _build_settings(
         tmp_path,
         _base_gui_inputs(
+            deepseek_thinking_mode=None,
             deepseek_reasoning_effort="max",
         ),
         gui,
     )
 
-    assert settings.translate_engine_settings._openai_extra_body is None
+    assert settings.translate_engine_settings._openai_extra_body == {
+        "thinking": {"type": "disabled"}
+    }
     assert settings.translate_engine_settings.openai_send_reasoning_effort is None
     assert settings.translate_engine_settings.openai_reasoning_effort is None
 
@@ -269,7 +311,7 @@ def test_term_deepseek_uses_same_thinking_mode_control(tmp_path, monkeypatch):
     assert settings.term_extraction_engine_settings.openai_reasoning_effort == "max"
 
 
-def test_unforced_term_deepseek_omits_thinking_body(tmp_path, monkeypatch):
+def test_unset_term_deepseek_sends_disabled_without_effort(tmp_path, monkeypatch):
     gui = _gui(monkeypatch)
 
     settings = _build_settings(
@@ -279,12 +321,15 @@ def test_unforced_term_deepseek_omits_thinking_body(tmp_path, monkeypatch):
             term_deepseek_model="deepseek-v4-flash",
             term_deepseek_api_key="dummy-key",
             term_deepseek_enable_json_mode=False,
+            term_deepseek_thinking_mode=None,
             term_deepseek_reasoning_effort="max",
         ),
         gui,
     )
 
-    assert settings.term_extraction_engine_settings._openai_extra_body is None
+    assert settings.term_extraction_engine_settings._openai_extra_body == {
+        "thinking": {"type": "disabled"}
+    }
     assert settings.term_extraction_engine_settings.openai_send_reasoning_effort is None
     assert settings.term_extraction_engine_settings.openai_reasoning_effort is None
 
@@ -405,7 +450,10 @@ def test_gui_main_deepseek_can_clear_saved_thinking_mode(tmp_path, monkeypatch):
         _base_gui_inputs(deepseek_thinking_mode=None),
     )
 
-    assert settings.translate_engine_settings._openai_extra_body is None
+    assert settings.translate_engine_settings._openai_extra_body == {
+        "thinking": {"type": "disabled"}
+    }
+    assert settings.translate_engine_settings.openai_reasoning_effort is None
 
 
 def test_gui_term_deepseek_can_clear_saved_thinking_mode(tmp_path, monkeypatch):
@@ -430,7 +478,10 @@ def test_gui_term_deepseek_can_clear_saved_thinking_mode(tmp_path, monkeypatch):
         ),
     )
 
-    assert settings.term_extraction_engine_settings._openai_extra_body is None
+    assert settings.term_extraction_engine_settings._openai_extra_body == {
+        "thinking": {"type": "disabled"}
+    }
+    assert settings.term_extraction_engine_settings.openai_reasoning_effort is None
 
 
 def test_gui_term_nullable_int_field_accepts_present_none(tmp_path, monkeypatch):

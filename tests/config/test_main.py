@@ -7,9 +7,13 @@ from unittest.mock import patch
 
 import pytest
 import tomlkit
+from pdf2zh_next.config.cli_env_model import CLIEnvSettingsModel
 from pdf2zh_next.config.main import ConfigManager
 from pdf2zh_next.config.main import MagicDefault
 from pdf2zh_next.config.main import build_args_parser
+from pdf2zh_next.config.translate_engine_model import (
+    TERM_EXTRACTION_ENGINE_METADATA_MAP,
+)
 from pydantic import BaseModel
 from pydantic import Field
 
@@ -508,12 +512,15 @@ class TestConfigManager:
         assert isinstance(default_config["translation"]["qps"], int | float)
         assert "deepseek_thinking_mode" in default_config["deepseek_detail"]
         assert "deepseek_reasoning_effort" in default_config["deepseek_detail"]
-        assert default_config["deepseek_detail"]["deepseek_thinking_mode"] is None
+        assert (
+            default_config["deepseek_detail"]["deepseek_thinking_mode"]
+            == "disabled"
+        )
         assert "term_deepseek_thinking_mode" in default_config["term_deepseek_detail"]
         assert "term_deepseek_reasoning_effort" in default_config["term_deepseek_detail"]
         assert (
             default_config["term_deepseek_detail"]["term_deepseek_thinking_mode"]
-            is None
+            == "disabled"
         )
 
     def test_settings_not_initialized(self):
@@ -695,6 +702,144 @@ class TestConfigManager:
         read_content = cm._read_toml_file(test_file)
         assert read_content["basic"]["debug"] is True
         assert read_content["translation"]["qps"] == 15
+
+    def test_deepseek_all_config_sources_omitted_default_to_disabled(self):
+        """The model default is applied only after omitted sources are merged."""
+        cm = ConfigManager()
+        merged = cm.merge_settings([{}, {}, {"deepseek": True}])
+
+        cli_settings = CLIEnvSettingsModel(**merged)
+        assert cli_settings.deepseek_detail.deepseek_thinking_mode == "disabled"
+        settings = cli_settings.to_settings_model()
+        settings.translate_engine_settings.deepseek_api_key = "dummy-key"
+        settings.validate_settings()
+
+        assert settings.translate_engine_settings._openai_extra_body == {
+            "thinking": {"type": "disabled"}
+        }
+        assert settings.translate_engine_settings.openai_reasoning_effort is None
+
+    def test_deepseek_env_overrides_file_and_cli_overrides_env(self):
+        cm = ConfigManager()
+        file_settings = {
+            "deepseek": True,
+            "deepseek_detail": {"deepseek_thinking_mode": None},
+        }
+        env_settings = {
+            "deepseek_detail": {"deepseek_thinking_mode": "enabled"}
+        }
+        cli_settings = {
+            "deepseek_detail": {"deepseek_thinking_mode": "disabled"}
+        }
+
+        env_merged = cm.merge_settings([env_settings, file_settings])
+        assert env_merged["deepseek_detail"]["deepseek_thinking_mode"] == "enabled"
+
+        cli_merged = cm.merge_settings([cli_settings, env_settings, file_settings])
+        assert cli_merged["deepseek_detail"]["deepseek_thinking_mode"] == "disabled"
+
+    def test_deepseek_toml_null_round_trip_and_override(
+        self, temp_config_dir: Path
+    ):
+        cm = ConfigManager()
+        config_file = temp_config_dir / "deepseek-null.toml"
+        original = {
+            "deepseek": True,
+            "deepseek_detail": {
+                "deepseek_api_key": "dummy-key",
+                "deepseek_thinking_mode": None,
+                "deepseek_reasoning_effort": "max",
+            },
+        }
+        cm._write_toml_file(config_file, original)
+
+        loaded = cm._read_toml_file(config_file)
+        assert loaded["deepseek_detail"]["deepseek_thinking_mode"] is None
+        assert cm._read_toml_file(config_file) == original
+
+        settings = CLIEnvSettingsModel(**loaded).to_settings_model()
+        assert settings.translate_engine_settings.deepseek_thinking_mode is None
+        settings.validate_settings()
+        assert settings.translate_engine_settings._openai_extra_body == {
+            "thinking": {"type": "disabled"}
+        }
+        assert settings.translate_engine_settings.openai_reasoning_effort is None
+
+        overridden = cm.merge_settings(
+            [
+                {"deepseek_detail": {"deepseek_thinking_mode": "enabled"}},
+                loaded,
+            ]
+        )
+        enabled = CLIEnvSettingsModel(**overridden).to_settings_model()
+        enabled.validate_settings()
+        assert enabled.translate_engine_settings._openai_extra_body == {
+            "thinking": {"type": "enabled"}
+        }
+        assert enabled.translate_engine_settings.openai_reasoning_effort == "max"
+        assert cm._read_toml_file(config_file)["deepseek_detail"][
+            "deepseek_thinking_mode"
+        ] is None
+
+    def test_deepseek_toml_missing_field_gets_disabled_default(
+        self, temp_config_dir: Path
+    ):
+        cm = ConfigManager()
+        config_file = temp_config_dir / "deepseek-missing.toml"
+        cm._write_toml_file(
+            config_file,
+            {"deepseek": True, "deepseek_detail": {"deepseek_api_key": "dummy-key"}},
+        )
+
+        loaded = cm._read_toml_file(config_file)
+        assert "deepseek_thinking_mode" not in loaded["deepseek_detail"]
+        cli_settings = CLIEnvSettingsModel(**loaded)
+        assert cli_settings.deepseek_detail.deepseek_thinking_mode == "disabled"
+        settings = cli_settings.to_settings_model()
+        settings.validate_settings()
+        assert settings.translate_engine_settings._openai_extra_body == {
+            "thinking": {"type": "disabled"}
+        }
+
+    @pytest.mark.parametrize(
+        ("mode", "expected_type"),
+        [("enabled", "enabled"), (None, "disabled")],
+    )
+    def test_term_deepseek_explicit_modes_convert_to_base_settings(
+        self, mode, expected_type
+    ):
+        term_model = TERM_EXTRACTION_ENGINE_METADATA_MAP[
+            "DeepSeek"
+        ].term_setting_model_type
+        term_settings = term_model(
+            term_deepseek_api_key="dummy-key",
+            term_deepseek_thinking_mode=mode,
+            term_deepseek_reasoning_effort="max",
+        )
+        base = term_settings.to_base_settings()
+
+        assert base.deepseek_thinking_mode == mode
+        transformed = base.transform()
+        assert transformed._openai_extra_body == {
+            "thinking": {"type": expected_type}
+        }
+        if mode == "enabled":
+            assert transformed.openai_reasoning_effort == "max"
+        else:
+            assert transformed.openai_reasoning_effort is None
+
+    def test_term_deepseek_omitted_mode_inherits_disabled_default(self):
+        term_model = TERM_EXTRACTION_ENGINE_METADATA_MAP[
+            "DeepSeek"
+        ].term_setting_model_type
+        term_settings = term_model(term_deepseek_api_key="dummy-key")
+
+        assert term_settings.term_deepseek_thinking_mode == "disabled"
+        base = term_settings.to_base_settings()
+        assert base.deepseek_thinking_mode == "disabled"
+        assert base.transform()._openai_extra_body == {
+            "thinking": {"type": "disabled"}
+        }
 
     def test_merge_settings_translation_engine_priority(self):
         """Higher priority config should determine translation engine"""

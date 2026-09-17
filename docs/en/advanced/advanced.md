@@ -8,7 +8,7 @@
 - [Rate Limiting Configuration Guide](#rate-limiting-configuration-guide)
 - [Partial translation](#partial-translation)
 - [Specify source and target languages](#specify-source-and-target-languages)
-- [Translate wih exceptions](#translate-wih-exceptions)
+- [Translate with exceptions](#translate-with-exceptions)
 - [Custom prompt](#custom-prompt)
 - [Custom configuration](#custom-configuration)
 - [Skip clean](#skip-clean)
@@ -102,7 +102,7 @@ In the following table, we list all advanced options for reference:
 
 #### Rate Limiting Configuration Guide
 
-When using translation services, proper rate limiting configuration is crucial to avoid API errors and optimize performance. This guide explains how to configure `--qps` and `--pool-max-worker` parameters based on different upstream service limitations.
+When using translation services, proper rate limiting configuration is crucial to avoid API errors and optimize performance. This guide explains how to configure `--qps` and `--pool-max-workers` parameters based on different upstream service limitations.
 
 > [!TIP]
 >
@@ -125,7 +125,7 @@ If your translation service has a limit of 600 RPM:
 - `pool_size = 10 * 10 = 100`
 
 ```bash
-pdf2zh example.pdf --qps 10 --pool-max-worker 100
+pdf2zh example.pdf --qps 10 --pool-max-workers 100
 ```
 
 ##### Concurrent Connection Limiting
@@ -142,7 +142,7 @@ If your translation service allows 50 concurrent connections:
 - `qps = 45`
 
 ```bash
-pdf2zh example.pdf --qps 45 --pool-max-worker 45
+pdf2zh example.pdf --qps 45 --pool-max-workers 45
 ```
 
 ##### Best Practices
@@ -203,14 +203,14 @@ This command will translate the first page, the third page, pages 10-20, and all
 See [Google Languages Codes](https://developers.google.com/admin-sdk/directory/v1/languages), [DeepL Languages Codes](https://developers.deepl.com/docs/resources/supported-languages)
 
 ```bash
-pdf2zh_next example.pdf --lang-in en -lang-out ja
+pdf2zh_next example.pdf --lang-in en --lang-out ja
 ```
 
 [⬆️ Back to top](#toc)
 
 ---
 
-#### Translate wih exceptions
+#### Translate with exceptions
 
 Use regex to specify formula fonts and characters that need to be preserved:
 

@@ -18,7 +18,7 @@ There are several methods to open the WebUI interface. If you are using **Window
     pdf2zh_next --gui
     ```
 
-4. If your browswer has not been started automatically, goto
+4. If your browser has not been started automatically, goto
 
     ```bash
     http://localhost:7860/

@@ -118,6 +118,9 @@ class OpenAITranslator(BaseTranslator):
         message = self._remove_cot_content(message)
         return message
 
+    def llm_prompt(self, text: str) -> list[dict[str, str]]:
+        return [{"role": "user", "content": text}]
+
     @retry(
         retry=retry_if_exception_type(openai.RateLimitError),
         stop=stop_after_attempt(100),
@@ -138,12 +141,7 @@ class OpenAITranslator(BaseTranslator):
         response = self.client.chat.completions.create(
             model=self.model,
             **options,
-            messages=[
-                {
-                    "role": "user",
-                    "content": text,
-                },
-            ],
+            messages=self.llm_prompt(text),
         )
         try:
             if hasattr(response, "usage") and response.usage:

@@ -1082,6 +1082,7 @@ async def _run_translation_task(
                 "progress_start",
                 "progress_update",
                 "progress_end",
+                "visual_review_progress",
             ):
                 # Update progress bar
                 desc = event["stage"]
@@ -1102,6 +1103,10 @@ async def _run_translation_task(
                 dual_path = result.dual_pdf_path
                 glossary_path = result.auto_extracted_glossary_path
                 token_usage = event.get("token_usage", {})
+                if review := event.get("visual_review"):
+                    gr.Info(
+                        f"DeepSeek final PDF visual review passed: {review['pages_reviewed']} pages."
+                    )
                 # progress(1.0, desc=_("Translation complete!")) # Let caller handle final completion
                 break
             elif event["type"] == "error":
@@ -1325,7 +1330,7 @@ async def translate_files(
 
             # Accumulate tokens
             if token_usage:
-                for key in ["main", "term"]:
+                for key in ["main", "term", "visual_review"]:
                     if key in token_usage:
                         u = token_usage[key]
                         all_token_usage["total"] += u.get("total", 0)

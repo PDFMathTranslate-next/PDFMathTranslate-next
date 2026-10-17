@@ -263,6 +263,66 @@ class DeepSeekSettings(BaseModel):
 GUI_PASSWORD_FIELDS.append("deepseek_api_key")
 
 
+class DeepSeekReviewSettings(BaseModel):
+    """DeepSeek translation, contextual text review and final PDF visual review."""
+
+    translate_engine_type: Literal["DeepSeekReview"] = Field(default="DeepSeekReview")
+    support_llm: Literal["yes", "no"] = Field(default="yes")
+    deepseek_review_api_key: str | None = Field(
+        default=None, description="API key for DeepSeek translation and both reviews"
+    )
+    deepseek_review_model: str = Field(
+        default="deepseek-flash",
+        description="DeepSeek model for translation and review",
+    )
+    deepseek_review_domain: str = Field(
+        default="", description="Subject area for translation and review"
+    )
+    deepseek_review_context: str = Field(
+        default="",
+        description="Document background or terminology guidance for translation and both reviews",
+    )
+    deepseek_review_translation_prompt: str | None = Field(
+        default=None,
+        description="Custom system prompt for the initial academic translation",
+    )
+    deepseek_review_prompt: str | None = Field(
+        default=None,
+        description="Custom system prompt for reviewing the draft translation",
+    )
+    deepseek_review_visual_model: str = Field(
+        default="deepseek-flash",
+        description="Image-capable DeepSeek model for mandatory final PDF visual review",
+    )
+    deepseek_review_visual_prompt: str | None = Field(
+        default=None,
+        description="Custom system instructions for final PDF visual review",
+    )
+
+    def validate_settings(self) -> None:
+        self.deepseek_review_api_key = _clean_string(self.deepseek_review_api_key)
+        self.deepseek_review_model = self.deepseek_review_model.strip()
+        self.deepseek_review_domain = self.deepseek_review_domain.strip()
+        self.deepseek_review_context = self.deepseek_review_context.strip()
+        self.deepseek_review_translation_prompt = (
+            _clean_string(self.deepseek_review_translation_prompt) or None
+        )
+        self.deepseek_review_prompt = _clean_string(self.deepseek_review_prompt) or None
+        self.deepseek_review_visual_model = self.deepseek_review_visual_model.strip()
+        self.deepseek_review_visual_prompt = (
+            _clean_string(self.deepseek_review_visual_prompt) or None
+        )
+        if not self.deepseek_review_api_key:
+            raise ValueError("DeepSeek review API key is required")
+        if not self.deepseek_review_model:
+            raise ValueError("DeepSeek review model is required")
+        if not self.deepseek_review_visual_model:
+            raise ValueError("DeepSeek visual review model is required")
+
+
+GUI_PASSWORD_FIELDS.append("deepseek_review_api_key")
+
+
 class OllamaSettings(BaseModel):
     """Ollama API settings"""
 
@@ -955,6 +1015,7 @@ TRANSLATION_ENGINE_SETTING_TYPE: TypeAlias = (
     | BingSettings
     | DeepLSettings
     | DeepSeekSettings
+    | DeepSeekReviewSettings
     | OllamaSettings
     | XinferenceSettings
     | AzureOpenAISettings

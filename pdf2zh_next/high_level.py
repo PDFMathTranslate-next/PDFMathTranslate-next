@@ -6,6 +6,7 @@ import multiprocessing.connection
 import multiprocessing.queues
 import queue
 import threading
+import time
 import traceback
 from collections.abc import AsyncGenerator
 from functools import partial
@@ -22,6 +23,7 @@ from babeldoc.main import create_progress_handler
 from rich.logging import RichHandler
 
 from pdf2zh_next.config.model import SettingsModel
+from pdf2zh_next.config.translate_engine_model import DeepSeekReviewSettings
 from pdf2zh_next.translator import get_term_translator
 from pdf2zh_next.translator import get_translator
 from pdf2zh_next.utils import asynchronize
@@ -136,11 +138,14 @@ def _translate_wrapper(
         # (cache race), producing many popups. Pre-filling the cache
         # prevents the subprocess call entirely.
         import sys
+
         if sys.platform == "win32":
             try:
                 import joblib.externals.loky.backend.context as _loky_ctx
+
                 if _loky_ctx.physical_cores_cache is None:
                     import os
+
                     _loky_ctx.physical_cores_cache = os.cpu_count()
                     logger.info(
                         "Pre-filled loky physical_cores_cache=%d to prevent "
@@ -182,6 +187,11 @@ def _translate_wrapper(
                         break
                     # Send normal progress events as before
                     if event["type"] == "finish":
+                        if isinstance(
+                            settings.translate_engine_settings, DeepSeekReviewSettings
+                        ):
+                            config.translator.raise_for_incomplete_reviews()
+                            event["text_review"] = {"status": "passed"}
                         # Extract token usage
                         token_usage = {}
 
@@ -660,6 +670,40 @@ async def do_translate_async_stream(
 
     try:
         async for event in translate_func():
+            if event["type"] == "finish" and isinstance(
+                settings.translate_engine_settings, DeepSeekReviewSettings
+            ):
+                from pdf2zh_next.visual_review import VisualReviewError
+                from pdf2zh_next.visual_review import review_pdf_outputs
+
+                try:
+                    review_started = time.monotonic()
+                    if settings.basic.debug:
+                        babeldoc_config.translator.raise_for_incomplete_reviews()
+                        event["text_review"] = {"status": "passed"}
+                    if event.get("text_review", {}).get("status") != "passed":
+                        raise TranslationError("DeepSeek text review was not completed")
+                    async for review_event in review_pdf_outputs(
+                        settings, file, event["translate_result"]
+                    ):
+                        if review_event["type"] == "visual_review_complete":
+                            review = review_event["visual_review"]
+                            event["visual_review"] = review
+                            event.setdefault("token_usage", {})["visual_review"] = (
+                                review["token_usage"]
+                            )
+                        else:
+                            yield review_event
+                    if event.get("visual_review", {}).get("status") != "passed":
+                        raise TranslationError(
+                            "DeepSeek visual review was not completed"
+                        )
+                    review_seconds = time.monotonic() - review_started
+                    event["visual_review"]["seconds"] = review_seconds
+                    if hasattr(event["translate_result"], "total_seconds"):
+                        event["translate_result"].total_seconds += review_seconds
+                except (VisualReviewError, ValueError) as exc:
+                    raise TranslationError(str(exc)) from exc
             yield event
             if settings.basic.debug:
                 logger.debug(event)
@@ -712,6 +756,13 @@ async def do_translate_file_async(
         with progress_context:
             try:
                 async for event in do_translate_async_stream(settings, file):
+                    if event["type"] == "visual_review_progress":
+                        logger.info(
+                            "Final PDF visual review: %s/%s pages",
+                            event["stage_current"],
+                            event["stage_total"],
+                        )
+                        continue
                     progress_handler(event)
                     if settings.basic.debug:
                         logger.debug(event)
@@ -722,6 +773,13 @@ async def do_translate_file_async(
                         logger.info(f"  Time Cost: {result.total_seconds:.2f}s")
                         logger.info(f"  Mono PDF: {result.mono_pdf_path or 'None'}")
                         logger.info(f"  Dual PDF: {result.dual_pdf_path or 'None'}")
+                        if review := event.get("visual_review"):
+                            logger.info(
+                                "  DeepSeek visual review: %s (%s pages); report: %s",
+                                review["status"],
+                                review["pages_reviewed"],
+                                review["report_path"],
+                            )
 
                         token_usage = event.get("token_usage", {})
                         if token_usage:
@@ -754,6 +812,16 @@ async def do_translate_file_async(
                                     "cache_hit_prompt"
                                 ]
                                 total_usage["completion"] += term_usage["completion"]
+                            if "visual_review" in token_usage:
+                                visual_usage = token_usage["visual_review"]
+                                logger.info(
+                                    "  Visual Reviewer: Total %s, Prompt %s, Completion %s",
+                                    visual_usage["total"],
+                                    visual_usage["prompt"],
+                                    visual_usage["completion"],
+                                )
+                                for key in total_usage:
+                                    total_usage[key] += visual_usage[key]
                             logger.info(
                                 f"  Total Token Usage: Total {total_usage['total']}, Prompt {total_usage['prompt']}, Cache Hit Prompt {total_usage['cache_hit_prompt']}, Completion {total_usage['completion']}"
                             )

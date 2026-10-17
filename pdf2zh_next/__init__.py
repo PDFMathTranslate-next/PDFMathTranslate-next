@@ -3,6 +3,7 @@ from pdf2zh_next.config import AzureOpenAISettings
 from pdf2zh_next.config import AzureSettings
 from pdf2zh_next.config import BingSettings
 from pdf2zh_next.config import DeepLSettings
+from pdf2zh_next.config import DeepSeekReviewSettings
 from pdf2zh_next.config import DeepSeekSettings
 from pdf2zh_next.config import DifySettings
 from pdf2zh_next.config import GeminiSettings
@@ -44,6 +45,7 @@ __all__ = [
     "GoogleSettings",
     "DeepLSettings",
     "DeepSeekSettings",
+    "DeepSeekReviewSettings",
     "OllamaSettings",
     "XinferenceSettings",
     "AzureOpenAISettings",

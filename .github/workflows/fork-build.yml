@@ -214,7 +214,7 @@ jobs:
 
           Write-Host "==== 在 venv 环境中安装项目依赖 ===="
           uv pip install .
-          uv pip install BabelDOC[directml]
+          uv pip install "BabelDOC[directml]>=0.7.0,<0.8.0"
           uv run pdf2zh --help
 
           Write-Host "==== 复制 venv/Lib/site-packages 到 build/ ===="

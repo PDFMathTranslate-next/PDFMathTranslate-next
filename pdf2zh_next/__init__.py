@@ -30,7 +30,7 @@ from pdf2zh_next.high_level import do_translate_file_async
 
 # from pdf2zh_next.high_level import translate, translate_stream
 
-__version__ = "2.9.0"
+__version__ = "2.10.0"
 __author__ = "Byaidu, awwaawwa"
 __license__ = "AGPL-3.0"
 __maintainer__ = "awwaawwa"

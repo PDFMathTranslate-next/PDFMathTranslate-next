@@ -127,7 +127,7 @@ jobs:
           if ("${{ github.event.inputs.babeldoc_version }}") {
             uv pip install --compile-bytecode "BabelDOC[directml]==${{ github.event.inputs.babeldoc_version }}"
           } else {
-            uv pip install --upgrade --compile-bytecode "BabelDOC[directml]"
+            uv pip install --upgrade --compile-bytecode "BabelDOC[directml]>=0.7.0,<0.8.0"
           }
           pdf2zh --version
           babeldoc --version

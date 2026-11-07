@@ -21,7 +21,7 @@
   <!-- <a href="https://github.com/PDFMathTranslate-next/PDFMathTranslate-next/pulls">
     <img src="https://img.shields.io/badge/contributions-welcome-green"></a> -->
   <a href="https://t.me/+Z9_SgnxmsmA5NzBl">
-    <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=flat-squeare&logo=telegram&logoColor=white"></a>
+    <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=flat-square&logo=telegram&logoColor=white"></a>
   <!-- License -->
   <a href="./LICENSE">
     <img src="https://img.shields.io/github/license/PDFMathTranslate-next/PDFMathTranslate-next"></a>
@@ -68,9 +68,9 @@ You can try our application out using either of the following services:
 
 ### Installation
 
-1. [**Windows EXE**](https://pdf2zh-next.com/getting-started/INSTALLATION_winexe.html) <small>Recommand for Windows</small>
-2. [**Docker**](https://pdf2zh-next.com/getting-started/INSTALLATION_docker.html) <small>Recommand for Linux</small>
-3. [**uv** (a Python package manager)](https://pdf2zh-next.com/getting-started/INSTALLATION_uv.html) <small>Recommand for macOS</small>
+1. [**Windows EXE**](https://pdf2zh-next.com/getting-started/INSTALLATION_winexe.html) <small>Recommended for Windows</small>
+2. [**Docker**](https://pdf2zh-next.com/getting-started/INSTALLATION_docker.html) <small>Recommended for Linux</small>
+3. [**uv** (a Python package manager)](https://pdf2zh-next.com/getting-started/INSTALLATION_uv.html) <small>Recommended for macOS</small>
 
 ---
 
@@ -88,7 +88,7 @@ For detailed explanations, please refer to our document about [Advanced Usage](h
 
 <h2 id="downstream">Secondary Development (APIs)</h2>
 
-<!-- <!-- For downstream applications, please refer to our document about [API Details](./docs/APIS.md) for futher information about: -->
+<!-- <!-- For downstream applications, please refer to our document about [API Details](./docs/APIS.md) for further information about: -->
 
 - [Python API](./docs/en/advanced/API/python.md), how to use the program in other Python programs
 <!-- - [HTTP API](./docs/APIS.md#api-http), how to communicate with a server with the program installed -->

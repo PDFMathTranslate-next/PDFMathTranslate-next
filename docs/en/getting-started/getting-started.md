@@ -6,9 +6,9 @@ PDFMathTranslate is a powerful PDF translation tool. You can install and start u
 
 ### Installation
 
-1. [**Windows EXE**](./INSTALLATION_winexe.md) <small>Recommand for Windows</small>
-2. [**Docker**](./INSTALLATION_docker.md) <small>Recommand for Linux</small>
-3. [**uv** (a Python package manager)](./INSTALLATION_uv.md) <small>Recommand for macOS</small>
+1. [**Windows EXE**](./INSTALLATION_winexe.md) <small>Recommended for Windows</small>
+2. [**Docker**](./INSTALLATION_docker.md) <small>Recommended for Linux</small>
+3. [**uv** (a Python package manager)](./INSTALLATION_uv.md) <small>Recommended for macOS</small>
 
 ---
 

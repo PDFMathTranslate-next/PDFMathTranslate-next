@@ -1,6 +1,6 @@
 [project]
 name = "pdf2zh-next"
-version = "2.10.1"
+version = "2.10.2"
 description = "PDF Translator based on BabelDOC"
 authors = [
     { name = "awwaawwa", email = "aw@funstory.ai" },
@@ -81,7 +81,7 @@ max-line-length = 88
 
 
 [bumpver]
-current_version = "2.10.1"
+current_version = "2.10.2"
 version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
 
 [bumpver.file_patterns]

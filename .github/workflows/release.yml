@@ -405,7 +405,7 @@ jobs:
 
           Write-Host "==== 在 venv 环境中安装项目依赖 ===="
           uv pip install .
-          uv pip install --compile-bytecode "BabelDOC[directml]>=0.7.0,<0.8.0"
+          uv pip install --compile-bytecode "BabelDOC[directml]>=0.7.1,<0.8.0"
           pdf2zh --version
           babeldoc --version
 

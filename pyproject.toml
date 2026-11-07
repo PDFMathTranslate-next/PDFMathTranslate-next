@@ -1,6 +1,6 @@
 [project]
 name = "pdf2zh-next"
-version = "2.10.0"
+version = "2.10.1"
 description = "PDF Translator based on BabelDOC"
 authors = [
     { name = "awwaawwa", email = "aw@funstory.ai" },
@@ -32,7 +32,7 @@ dependencies = [
     "gradio-pdf>=0.0.21",
     "peewee>=3.17.8",
     "fontTools",
-    "babeldoc>=0.7.0,<0.8.0",
+    "babeldoc>=0.7.1,<0.8.0",
     "rich",
     "pydantic-settings>=2.8.1",
     "pydantic>=2.10.6",
@@ -81,7 +81,7 @@ max-line-length = 88
 
 
 [bumpver]
-current_version = "2.10.0"
+current_version = "2.10.1"
 version_pattern = "MAJOR.MINOR.PATCH[.PYTAGNUM]"
 
 [bumpver.file_patterns]

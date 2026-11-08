@@ -31,6 +31,12 @@ Currently supported Tier 1 translation engines include:
 6. Zhipu
 7. OpenAICompatible
 
+#### DeepSeek thinking mode
+
+DeepSeek thinking is enabled only when `deepseek_thinking_mode` is explicitly set to `enabled`. The default is `disabled`, and the selected mode is sent for any DeepSeek model name; this local mapping does not guarantee that every model supports the parameter.
+
+Selecting **Unset (defaults to disabled)** also sends an explicit disabled mode and does not send `deepseek_reasoning_effort`. The same applies to older configuration files where `deepseek_thinking_mode = "null"`. Those files do not need to be migrated or rewritten: the stored null value remains unset, but now uses the application's disabled default. A configured reasoning effort is sent only while thinking mode is enabled.
+
 #### Tier 2 (Community Support)
 
 **Tier 2 translation engines** are maintained and supported by the community.  

@@ -46,6 +46,13 @@ class TestBuildArgsParser:
         assert "basic" in field_name2type
         assert "translation" in field_name2type
 
+    def test_server_name_is_explicit_cli_value(self):
+        parser, _ = build_args_parser()
+
+        args = parser.parse_args(["--server-name", "127.0.0.1"])
+
+        assert args.server_name == "127.0.0.1"
+
     def test_deepseek_thinking_mode_is_explicit_cli_value(self):
         """Test DeepSeek thinking mode can be selected from CLI."""
         parser, _ = build_args_parser()
@@ -80,6 +87,7 @@ class TestBuildArgsParser:
         assert args.deepseek is True
         assert args.deepseek_thinking_mode is MagicDefault
 
+
 class TestConfigManager:
     def test_singleton(self):
         """Test ConfigManager singleton pattern"""
@@ -107,6 +115,13 @@ class TestConfigManager:
         assert env_settings["report_interval"] == 0.5
         assert env_settings["translation"]["qps"] == 10
         assert "invalid_key" not in env_settings
+
+    def test_server_name_env_var(self, monkeypatch: pytest.MonkeyPatch):
+        monkeypatch.setenv("PDF2ZH_SERVER_NAME", "127.0.0.1")
+
+        env_settings = ConfigManager().parse_env_vars()
+
+        assert env_settings["gui_settings"]["server_name"] == "127.0.0.1"
 
     def test_convert_env_value(self):
         """Test environment variable value conversion"""

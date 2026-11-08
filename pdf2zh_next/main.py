@@ -94,6 +94,7 @@ async def main() -> int:
         setup_gui(
             auth_file=settings.gui_settings.auth_file,
             welcome_page=settings.gui_settings.welcome_page,
+            server_name=settings.gui_settings.server_name,
             server_port=settings.gui_settings.server_port,
         )
         return 0

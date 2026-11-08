@@ -433,6 +433,14 @@ You can use multiple files for glossary. And different files should be split by 
 pdf2zh_next example.pdf --glossaries "glossary1.csv,glossary2.csv,glossary3.csv"
 ```
 
+Claude Code also accepts a supplied glossary, for example:
+
+```bash
+pdf2zh_next example.pdf --claudecode --claude-code-path "path/to/claude" --glossaries "glossary.csv"
+```
+
+Glossary entries are translation guidance, not a guarantee that every term will be used. Claude Code does not automatically extract a glossary by default. The selected document content is sent to the configured Claude Code session and may incur usage charges.
+
 For WebUI user:
 
 You can upload your own glossary file now. After you uploaded the file, you can check them by click their name and the content shows below.

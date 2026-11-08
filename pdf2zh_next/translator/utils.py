@@ -33,7 +33,7 @@ def _create_translator_instance(
         settings: Global settings model.
         translator_config: Concrete translation engine settings instance.
         rate_limiter: Rate limiter for this translator.
-        enforce_glossary_support: Whether to enforce glossary + LLM support check.
+        enforce_glossary_support: Whether to enforce glossary support.
     """
     if isinstance(translator_config, NOT_SUPPORTED_TRANSLATION_ENGINE_SETTING_TYPE):
         raise TranslateEngineSettingError(
@@ -50,7 +50,7 @@ def _create_translator_instance(
             if (
                 enforce_glossary_support
                 and settings.translation.glossaries
-                and not metadata.support_llm
+                and not metadata.support_glossary
             ):
                 raise TranslateEngineSettingError(
                     f"{translate_engine_type} does not support glossary. Please choose a different translator or remove the glossary."

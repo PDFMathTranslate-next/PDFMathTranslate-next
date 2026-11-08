@@ -869,6 +869,7 @@ class ClaudeCodeSettings(BaseModel):
     """Claude Code settings"""
 
     translate_engine_type: Literal["ClaudeCode"] = Field(default="ClaudeCode")
+    support_glossary: typing.ClassVar[bool] = True
     claude_code_path: str = Field(
         default="claude", description="Path to Claude Code CLI"
     )
@@ -997,6 +998,7 @@ class TranslationEngineMetadata:
     cli_detail_field_name: str | None
     setting_model_type: type[BaseModel]
     support_llm: bool
+    support_glossary: bool
 
     def __init__(
         self,
@@ -1014,6 +1016,9 @@ class TranslationEngineMetadata:
             (sl := setting_model_type.model_fields.get("support_llm", None))
             and sl.default == "yes"
         ) or False
+        self.support_glossary = self.support_llm or getattr(
+            setting_model_type, "support_glossary", False
+        )
 
 
 args = typing.get_args(TRANSLATION_ENGINE_SETTING_TYPE)

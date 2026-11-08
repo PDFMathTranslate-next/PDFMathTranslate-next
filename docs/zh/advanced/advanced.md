@@ -432,6 +432,14 @@ PDFMathTranslate 支持术语表功能。术语表文件应为 `csv` 格式。
 pdf2zh_next example.pdf --glossaries "glossary1.csv,glossary2.csv,glossary3.csv"
 ```
 
+Claude Code 也支持使用已有术语表，例如：
+
+```bash
+pdf2zh_next example.pdf --claudecode --claude-code-path "path/to/claude" --glossaries "glossary.csv"
+```
+
+术语表仅作为翻译参考，不能保证每个词条都会被采用。Claude Code 默认不会自动提取术语。选中的文档内容会发送到配置的 Claude Code 会话，并可能产生费用。
+
 对于 WebUI 用户：
 
 您现在可以上传自己的术语表文件了。上传文件后，您可以通过点击文件名来查看它们，内容会显示在下方。

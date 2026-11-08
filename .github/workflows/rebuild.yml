@@ -203,7 +203,7 @@ jobs:
           ref: ${{ needs.get-latest-release.outputs.tag }}
 
       - name: Download build artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: win64-exe-with-assets
           path: ./build
@@ -301,7 +301,7 @@ jobs:
       - name: Convert to lowercase
         run: echo "GHCR_REPO_LOWER=$(echo ${{ env.GHCR_REPO }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
       - name: Download digests
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           path: ${{ runner.temp }}/digests
           pattern: digests-*
@@ -350,7 +350,7 @@ jobs:
         with:
           ref: ${{ needs.get-latest-release.outputs.tag }}
       - name: Download build artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: win64-exe-with-assets
           path: ./build

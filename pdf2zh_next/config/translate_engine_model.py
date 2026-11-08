@@ -881,6 +881,44 @@ class ClaudeCodeSettings(BaseModel):
             raise ValueError("Claude Code path is required")
 
 
+class CodexSettings(BaseModel):
+    """Codex CLI settings"""
+
+    translate_engine_type: Literal["Codex"] = Field(default="Codex")
+    codex_path: str = Field(default="codex", description="Path to Codex CLI")
+    codex_model: str | None = Field(
+        default="gpt-5.4-mini",
+        description="Codex model to use (optional)",
+    )
+    codex_timeout: str | None = Field(
+        default="180", description="Timeout (seconds) for Codex CLI"
+    )
+    codex_reasoning_effort: str | None = Field(
+        default="low",
+        description="Reasoning effort for Codex CLI (minimal/low/medium/high)",
+    )
+
+    def validate_settings(self):
+        if not self.codex_path:
+            raise ValueError("Codex path is required")
+        self.codex_path = _clean_string(self.codex_path)
+        self.codex_model = _clean_string(self.codex_model)
+        self.codex_timeout = _check_if_positive_float(
+            _clean_string(self.codex_timeout),
+            field="Timeout",
+        )
+        self.codex_reasoning_effort = _clean_string(self.codex_reasoning_effort)
+        if self.codex_reasoning_effort and self.codex_reasoning_effort not in {
+            "minimal",
+            "low",
+            "medium",
+            "high",
+        }:
+            raise ValueError(
+                "Codex reasoning effort must be one of minimal/low/medium/high"
+            )
+
+
 class CLISettings(BaseModel):
     """CLI translator settings
 
@@ -971,6 +1009,7 @@ TRANSLATION_ENGINE_SETTING_TYPE: TypeAlias = (
     | QwenMtSettings
     | OpenAICompatibleSettings
     | ClaudeCodeSettings
+    | CodexSettings
     | CLISettings
 )
 

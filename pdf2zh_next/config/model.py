@@ -195,6 +195,10 @@ class PDFSettings(BaseModel):
         default=False,
         description="Handle alternating line numbers and text paragraphs in documents with line numbers",
     )
+    remove_margin_line_numbers: bool = Field(
+        default=False,
+        description="Remove margin line numbers before translation",
+    )
     no_remove_non_formula_lines: bool = Field(
         default=False,
         description="Remove non-formula lines within paragraph areas",

@@ -36,6 +36,7 @@ class ClaudeCodeTranslator(BaseTranslator):
                 [self.claude_code_path, "--version"],
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
                 timeout=5,
             )
             if result.returncode != 0:
@@ -55,7 +56,25 @@ class ClaudeCodeTranslator(BaseTranslator):
     )
     def do_translate(self, text, rate_limit_params: dict = None) -> str:
         messages = self.prompt(text)
-        input_data = json.dumps({"type": "user", "message": messages[0]})
+        return self._run_prompt(messages[0]["content"])
+
+    @retry(
+        retry=retry_if_exception_type(
+            (subprocess.CalledProcessError, subprocess.TimeoutExpired)
+        ),
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=2, min=2, max=15),
+        before_sleep=before_sleep_log(logger, logging.WARNING),
+    )
+    def do_llm_translate(self, text, rate_limit_params: dict = None):
+        if text is None:
+            return None
+        return self._run_prompt(text)
+
+    def _run_prompt(self, prompt: str) -> str:
+        input_data = json.dumps(
+            {"type": "user", "message": {"role": "user", "content": prompt}}
+        )
 
         cmd = [
             self.claude_code_path,
@@ -69,55 +88,63 @@ class ClaudeCodeTranslator(BaseTranslator):
             "--output-format",
             "stream-json",
             "--verbose",
-            "--disallowedTools",
-            "Task Bash Glob Grep LS exit_plan_mode Read Edit MultiEdit Write NotebookRead NotebookEdit TodoRead TodoWrite",
+            "--tools",
+            "",
+            "--no-session-persistence",
         ]
 
         env = os.environ.copy()
         env.pop("ANTHROPIC_API_KEY", None)
 
         try:
-            logger.info(f"Running Claude Code: {cmd}\n{input_data}")
             process = subprocess.Popen(
                 cmd,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
+                encoding="utf-8",
                 env=env,
             )
 
             stdout, stderr = process.communicate(input=input_data, timeout=120)
-            logger.debug(f"CC: {stdout}")
-
             if process.returncode != 0:
-                logger.error(f"Claude Code failed: {stderr}")
-                raise subprocess.CalledProcessError(process.returncode, cmd, stderr)
+                raise subprocess.CalledProcessError(process.returncode, cmd)
 
             translation = self._parse_output(stdout)
             return translation.strip()
 
         except subprocess.TimeoutExpired as e:
             process.kill()
+            process.wait()
             raise ValueError("Claude Code translation timed out") from e
 
     def _parse_output(self, output: str) -> str:
         full_text = []
+        result_text = None
         for line in output.strip().split("\n"):
             if not line.strip() or not line.strip().startswith("{"):
                 continue
             try:
                 chunk = json.loads(line)
+                if chunk.get("type") == "result" and chunk.get("is_error"):
+                    raise ValueError("Claude Code returned an error")
                 if chunk.get("type") == "assistant" and "message" in chunk:
+                    if chunk.get("is_api_error_message") or chunk.get("error"):
+                        raise ValueError("Claude Code returned an error")
                     for content in chunk["message"].get("content", []):
                         if content.get("type") == "text":
                             full_text.append(content.get("text", ""))
                 elif chunk.get("type") == "text":
                     full_text.append(chunk.get("text", ""))
+                elif chunk.get("type") == "result" and isinstance(
+                    chunk.get("result"), str
+                ):
+                    result_text = chunk["result"]
             except json.JSONDecodeError:
                 continue
 
-        result = "".join(full_text).strip()
+        result = ("".join(full_text) or result_text or "").strip()
         if not result:
             raise ValueError("No translation received from Claude Code")
         return result

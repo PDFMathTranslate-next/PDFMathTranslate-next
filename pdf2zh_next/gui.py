@@ -58,7 +58,11 @@ def get_translation_dic(file_path: Path):
 
 __gui_service_arg_names = []
 __gui_term_service_arg_names = []
-LLM_support_index_map = {}
+
+
+def _service_supports_glossary(service_name: str | None) -> bool:
+    metadata = TRANSLATION_ENGINE_METADATA_MAP.get(service_name)
+    return bool(metadata and metadata.support_glossary)
 
 
 def _field_gui_extra(field) -> dict:
@@ -918,7 +922,7 @@ def _build_translate_settings(
 
 
 def _build_glossary_list(glossary_file, service_name=None):
-    if not LLM_support_index_map.get(service_name, False):
+    if not _service_supports_glossary(service_name):
         return None
     glossary_list = []
     if glossary_file is None:
@@ -927,7 +931,7 @@ def _build_glossary_list(glossary_file, service_name=None):
         try:
             f = io.StringIO(file.decode(chardet.detect(file)["encoding"]))
             with tempfile.NamedTemporaryFile(
-                mode="w", delete=False, suffix=".csv"
+                mode="w", delete=False, suffix=".csv", encoding="utf-8-sig", newline=""
             ) as temp_file:
                 temp_file.write(f.getvalue())
                 f.close()
@@ -2416,7 +2420,6 @@ with gr.Blocks(
         term_detail_visibility_dependency_inputs = {}
         term_detail_visibility_dependency_events = []
         term_detail_text_input_index_map = {}
-        LLM_support_index_map.clear()
         with gr.Row(elem_classes=["tab-main-row"], equal_height=True):
             # 左侧侧边栏
             with gr.Column(scale=0, min_width=70, elem_classes=["sidebar-nav"]):
@@ -2555,9 +2558,6 @@ with gr.Blocks(
                         __gui_service_arg_names = []
                         for service_name in available_services:
                             metadata = TRANSLATION_ENGINE_METADATA_MAP[service_name]
-                            LLM_support_index_map[metadata.translate_engine_type] = (
-                                metadata.support_llm
-                            )
                             if not metadata.cli_detail_field_name:
                                 # no detail field, no need to show
                                 continue
@@ -3288,14 +3288,14 @@ with gr.Blocks(
             detail_field_values = dict(
                 zip(detail_text_input_field_names, detail_values, strict=False)
             )
-            llm_support = LLM_support_index_map.get(service_name, False)
+            glossary_support = _service_supports_glossary(service_name)
             siliconflow_free_acknowledgement_visible = service_name == "SiliconFlowFree"
             siliconflow_update = [
                 gr.update(visible=siliconflow_free_acknowledgement_visible)
             ]
             return_list = []
             glossary_updates = [
-                gr.update(visible=llm_support)
+                gr.update(visible=glossary_support)
                 for i in range(len(require_llm_translator_inputs))
             ]
             if len(detail_text_inputs) == 1:
@@ -3841,7 +3841,7 @@ with gr.Blocks(
                         break
                 if not selected_service:
                     selected_service = available_services[0]
-                llm_support = LLM_support_index_map.get(selected_service, False)
+                glossary_support = _service_supports_glossary(selected_service)
 
                 # Follow the EXACT order of ui_setting_controls
                 # service
@@ -3909,7 +3909,7 @@ with gr.Blocks(
                     )
                 )
                 updates.append(
-                    gr.update(visible=llm_support)
+                    gr.update(visible=glossary_support)
                 )  # glossary_file visibility
                 updates.append(
                     gr.update(
@@ -4102,7 +4102,7 @@ with gr.Blocks(
                 siliconflow_free_ack_visible = selected_service == "SiliconFlowFree"
                 updates.append(gr.update(visible=siliconflow_free_ack_visible))
                 updates.append(
-                    gr.update(visible=llm_support)
+                    gr.update(visible=glossary_support)
                 )  # glossary_table visibility
                 updates.append(
                     gr.update(
